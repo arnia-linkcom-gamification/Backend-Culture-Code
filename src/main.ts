@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { darkMode } from './swagger/darkmode';
 
 async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule);
@@ -10,10 +11,20 @@ async function bootstrap() {
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Arnia/Linkcom - Gamification')
     .setDescription('API do projeto Gamification')
+    .setVersion('/v1')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('v1/docs', app, document);
-  await app.listen(configService.get('APP_PORT') || 3001);
+  app.setGlobalPrefix('/v1');
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
+  SwaggerModule.setup('docs', app, document, {
+    customCss: darkMode,
+  });
+  await app.listen(configService.get<number>('APP_PORT') || 3000);
 }
 bootstrap();
