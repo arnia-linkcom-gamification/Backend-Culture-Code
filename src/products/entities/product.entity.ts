@@ -10,15 +10,15 @@ import {
 } from 'typeorm';
 @Entity()
 export class Product {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
   @Column()
   name: string;
-  @Column()
+  @Column({ type: 'varchar' })
   description: string;
-  @Column()
+  @Column({ type: 'integer' })
   price: number;
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 256, nullable: true })
   image: string;
   //   @ManyToMany(() => User, (user) => user.products,{
   //     onDelete: 'CASCADE',
