@@ -5,12 +5,16 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { BadRequestException } from '@nestjs/common';
 import { RoleEnum } from 'src/enums/role.enum';
+import { Product } from 'src/products/entities/product.entity';
+import { Jewel } from 'src/jewels/entities/jewel.entity';
 
 @Entity('users')
 export class User {
@@ -38,17 +42,17 @@ export class User {
   @Column({ type: 'integer', default: 0 })
   credits: string;
 
-  //   @ManyToMany(() => Jewels, (jewwls) => jewwls.user, {
-  //     onDelete: 'CASCADE',
-  //   })
-  //   @JoinTable()
-  //   jewels: Jewels[];
+  @ManyToMany(() => Jewel, (jewel) => jewel.users, {
+    cascade: true,
+  })
+  @JoinTable()
+  jewels: Jewel[];
 
-  //   @ManyToMany(() => Products, (products) => products.user, {
-  //     onDelete: 'CASCADE',
-  //   })
-  //   @JoinTable()
-  //   products: Products[];
+  @ManyToMany(() => Product, (product) => product.users, {
+    cascade: true,
+  })
+  @JoinTable()
+  products: Product[];
 
   @DeleteDateColumn()
   deletedAt: Date;
