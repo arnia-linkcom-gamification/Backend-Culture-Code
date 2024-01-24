@@ -10,37 +10,20 @@ import {
 } from '@nestjs/common';
 //import { FileInterceptor } from '@nestjs/platform-express';
 //import { diskStorage } from 'multer';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
+import { CreatedProductDoc } from './docs/create-product.doc';
+import { ResponseCreateProductDoc } from './docs/response-create-product.doc';
 //import { UpdateProductDto } from './dto/update-product.dto';
-
+@ApiTags('Product')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
-
+  @ApiResponse({ type: ResponseCreateProductDoc })
+  @ApiBody({ type: CreatedProductDoc })
+  @ApiBearerAuth()
   @Post()
-  // @UseInterceptors(
-  //   FileInterceptor('file', {
-  //     storage: diskStorage({
-  //       destination: './uploads',
-  //       filename(req, file, callback) {
-  //         const [name, extension] = file.originalname.split('.');
-
-  //         const tempName =
-  //           name.split(' ').join('_') + '_' + Date.now() + '.' + extension;
-
-  //         callback(null, tempName);
-  //       },
-  //     }),
-  //     fileFilter(req, file, callback) {
-  //       if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-  //         return callback(null, false);
-  //       }
-
-  //       return callback(null, true);
-  //     },
-  //   }),
-  // )
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
   }
