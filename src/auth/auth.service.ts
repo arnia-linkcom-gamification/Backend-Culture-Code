@@ -7,8 +7,6 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
-import { Response } from 'express';
-import { ConfigService } from '@nestjs/config';
 import { User } from 'src/users/entities/user.entity';
 import { LoginDto } from './dto/login.dto';
 
@@ -20,7 +18,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(payload: LoginDto, response: Response) {
+  async login(payload: LoginDto) {
     try {
       const { email, password } = payload;
 
@@ -51,26 +49,13 @@ export class AuthService {
         role: user.role,
       };
 
-      const configService = new ConfigService();
-      const jwtToken = await this.jwtService.signAsync(tokenPayload);
-      const expiresData = new Date(
-        Date.now() + 1000 * 60 * configService.get<number>('JWT_EXPIRATION'),
-      );
+      const token = await this.jwtService.signAsync(tokenPayload);
 
-      response.cookie('token', jwtToken, {
-        expires: expiresData,
-      });
-
-      return;
+      return { token };
     } catch (error) {
       console.log(error);
 
       throw new HttpException(error.message, error.status);
     }
-  }
-
-  async logout(response: Response) {
-    response.cookie('token', '', { expires: new Date(Date.now()) });
-    return;
   }
 }
