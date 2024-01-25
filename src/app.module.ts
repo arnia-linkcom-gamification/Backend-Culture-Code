@@ -9,7 +9,7 @@ import { JewelsModule } from './jewels/jewels.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.dev.env',
+      envFilePath: '.env',
       isGlobal: true,
     }),
     UsersModule,
