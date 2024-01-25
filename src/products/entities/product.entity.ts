@@ -13,11 +13,11 @@ import {
 export class Product {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
-
-  @Column({ type: 'varchar', length: 128, unique: true })
+  @Column()
+  // @Column({ type: 'varchar', length: 128, unique: true })
   name: string;
-
-  @Column({ type: 'text' })
+  @Column()
+  //@Column({ type: 'text' })
   description: string;
 
   @Column({ type: 'integer' })

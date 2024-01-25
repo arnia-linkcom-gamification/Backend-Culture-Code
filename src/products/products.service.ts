@@ -42,6 +42,25 @@ export class ProductsService {
       throw error;
     }
   }
+
+  async paginationListProduct(page: number, productsPerPage: number) {
+    try {
+      const allProducts = (await this.productRepository.find()).length;
+      const products = await this.productRepository
+        .createQueryBuilder('product')
+        .skip((page - 1) * productsPerPage)
+        .take(productsPerPage)
+        .getMany();
+      const totalPages = allProducts / productsPerPage;
+      const payload = {
+        products,
+        allProducts,
+        totalPages,
+      };
+      return payload;
+    } catch (error) {}
+  }
+
   findAll() {
     return `This action returns all products`;
   }

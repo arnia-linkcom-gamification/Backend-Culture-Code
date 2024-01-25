@@ -6,6 +6,7 @@ import {
   //Patch,
   Param,
   Delete,
+  Query,
   //UseInterceptors,
 } from '@nestjs/common';
 //import { FileInterceptor } from '@nestjs/platform-express';
@@ -26,6 +27,14 @@ export class ProductsController {
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
+  }
+
+  @Get()
+  paginationListProduct(
+    @Query('page') page: number,
+    @Query('productsPerPage') productsPerPage: number,
+  ) {
+    return this.productsService.paginationListProduct(page, productsPerPage);
   }
 
   @Get()
