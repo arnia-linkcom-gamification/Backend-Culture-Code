@@ -7,11 +7,21 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CreatedProductDoc } from './docs/create-product.doc';
 import { ResponseCreateProductDoc } from './docs/response-create-product.doc';
+import { ResponsePaginationListProductDoc } from './docs/response-pagination-list-product.doc';
+import { PaginationListProductDoc } from './docs/pagination-list-product.doc';
+import { ResponseGetProductByFilterDoc } from './docs/response-get-product-by-filter.doc';
+import { GetProductByFilterDoc } from './docs/get-product-by-filter.doc';
 //import { UpdateProductDto } from './dto/update-product.dto';
 @ApiTags('Product')
 @Controller('products')
@@ -25,6 +35,8 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
+  @ApiResponse({ type: ResponsePaginationListProductDoc })
+  @ApiQuery({ type: PaginationListProductDoc })
   @Get()
   paginationListProduct(
     @Query('page') page: number,
@@ -33,6 +45,8 @@ export class ProductsController {
     return this.productsService.paginationListProduct(+page, +productsPerPage);
   }
 
+  @ApiResponse({ type: ResponseGetProductByFilterDoc })
+  @ApiQuery({ type: GetProductByFilterDoc })
   @Get('/filter')
   getProductByFilter(
     @Query('page') page: number,

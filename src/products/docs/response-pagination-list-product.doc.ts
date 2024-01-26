@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ResponseCreateProductDoc {
+export class ResponsePaginationListProductDoc {
   @ApiProperty({
     type: String,
     description: 'Refere-se ao id do produto no banco de dados',
@@ -52,7 +52,23 @@ export class ResponseCreateProductDoc {
   @ApiProperty({
     type: Date,
     description: 'Refere-se a data que o objeto foi deletado',
-    example: null,
+    example: 'null',
   })
   deleteAt: Date;
+
+  @ApiProperty({
+    type: Number,
+    description:
+      'Este é o número total de produtos cadastrados no banco de dados',
+    example: 198,
+  })
+  allProducts: number;
+
+  @ApiProperty({
+    type: Number,
+    description:
+      'Aqui reprensenta o número total de páginas considerando. Este número é resultado da operação allProducts / productsPerPage (este vem na requisição)',
+    example: 20,
+  })
+  totalPages: number;
 }
