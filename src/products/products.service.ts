@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -29,6 +30,7 @@ export class ProductsService {
       throw new BadRequestException(error.message);
     }
   }
+
   async findByName(name: string) {
     try {
       const product = await this.productRepository.findOne({
@@ -45,6 +47,9 @@ export class ProductsService {
 
   async paginationListProduct(page: number, productsPerPage: number) {
     try {
+      if (!page || !productsPerPage) {
+        throw new BadRequestException('The request is incomplete');
+      }
       const allProducts = (await this.productRepository.find()).length;
       const products = await this.productRepository
         .createQueryBuilder('product')
@@ -58,7 +63,47 @@ export class ProductsService {
         totalPages,
       };
       return payload;
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getProductByFilter(
+    page: number,
+    productsPerPage: number,
+    price: number,
+    name: string,
+  ) {
+    try {
+      const queryBuilder = this.productRepository
+        .createQueryBuilder('product')
+        .skip((page - 1) * productsPerPage)
+        .take(productsPerPage);
+
+      if (price && name) {
+        queryBuilder.andWhere(
+          'product.price = :price AND product.name = :name',
+          { price, name },
+        );
+      } else if (price) {
+        queryBuilder.andWhere('product.price = :price', { price });
+      } else if (name) {
+        queryBuilder.andWhere('LOWER(TRIM(product.name)) LIKE :name', {
+          name: `%${name.toLowerCase()}%`,
+        });
+      }
+
+      const products = await queryBuilder.getMany();
+
+      if (products.length === 0) {
+        throw new NotFoundException('There is not product to this filter');
+      }
+      return products;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   findAll() {
