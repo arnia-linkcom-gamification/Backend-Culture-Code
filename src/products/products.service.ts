@@ -99,7 +99,7 @@ export class ProductsService {
       const products = await queryBuilder.getMany();
 
       if (products.length === 0) {
-        throw new NotFoundException('There is not product to this filter');
+        throw new NotFoundException('There is not product to this filter.');
       }
       return products;
     } catch (error) {
@@ -118,6 +118,22 @@ export class ProductsService {
       }
       return product;
     } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async update(id: number, updateProductDto) {
+    try {
+      const { affected } = await this.productRepository.update(
+        id,
+        updateProductDto,
+      );
+      if (affected === 0) {
+        throw new NotFoundException('Product not found');
+      }
+      return await this.findOne(id);
+    } catch (error) {
+      console.log(error);
       throw new HttpException(error.message, error.status);
     }
   }
