@@ -52,7 +52,7 @@ export class ResponseCreateProductDoc {
   @ApiProperty({
     type: Date,
     description: 'Refere-se a data que o objeto foi deletado',
-    example: 'null',
+    example: null,
   })
   deleteAt: Date;
 }
