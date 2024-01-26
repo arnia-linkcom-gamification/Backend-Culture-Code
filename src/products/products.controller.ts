@@ -49,9 +49,9 @@ export class ProductsController {
   @ApiQuery({ type: GetProductByFilterDoc })
   @Get('/filter')
   getProductByFilter(
-    @Query('page') page: number,
-    @Query('productsPerPage') productsPerPage: number,
-    @Query('price') price: number,
+    @Query('page') page: string,
+    @Query('productsPerPage') productsPerPage: string,
+    @Query('price') price: string,
     @Query('name') name: string,
   ) {
     return this.productsService.getProductByFilter(
