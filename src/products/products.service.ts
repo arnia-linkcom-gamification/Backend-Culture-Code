@@ -122,6 +122,22 @@ export class ProductsService {
     }
   }
 
+  async update(id: number, updateProductDto) {
+    try {
+      const { affected } = await this.productRepository.update(
+        id,
+        updateProductDto,
+      );
+      if (affected === 0) {
+        throw new NotFoundException('Product not found');
+      }
+      return await this.findOne(id);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
   async remove(id: number) {
     try {
       if (!id) {
