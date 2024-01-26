@@ -18,9 +18,8 @@ import { Roles } from 'src/decorators/role.decorator';
 import { RoleEnum } from 'src/enums/role.enum';
 import { AuthGuard } from 'src/auth/guards/auth-guard';
 import { RolesGuard } from 'src/auth/guards/roles-guard';
-
-@Controller('users')
 @ApiTags('Usuários')
+@Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -32,6 +31,7 @@ export class UsersController {
   }
 
   @Get()
+  @ApiBearerAuth()
   @ApiResponse({ type: ResponseCreateUserDoc, isArray: true })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)

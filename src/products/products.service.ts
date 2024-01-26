@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ConflictException,
   HttpException,
-  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -30,10 +29,7 @@ export class ProductsService {
       return newProduct;
     } catch (error) {
       console.log(error);
-      throw new HttpException(
-        error?.message || 'Server error',
-        error?.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(error.message, error.status);
     }
   }
 
@@ -47,10 +43,7 @@ export class ProductsService {
       return product;
     } catch (error) {
       console.log(error);
-      throw new HttpException(
-        error?.message || 'Server error',
-        error?.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(error.message, error.status);
     }
   }
 
@@ -74,10 +67,7 @@ export class ProductsService {
       return payload;
     } catch (error) {
       console.log(error);
-      throw new HttpException(
-        error?.message || 'Server error',
-        error?.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(error.message, error.status);
     }
   }
 
@@ -114,19 +104,22 @@ export class ProductsService {
       return products;
     } catch (error) {
       console.log(error);
-      throw new HttpException(
-        error?.message || 'Server error',
-        error?.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(error.message, error.status);
     }
   }
 
-  findAll() {
-    return `This action returns all products`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: number) {
+    try {
+      const product = await this.productRepository.findOneOrFail({
+        where: { id },
+      });
+      if (!product) {
+        throw new NotFoundException('Product not found');
+      }
+      return product;
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   async remove(id: number) {
@@ -143,10 +136,7 @@ export class ProductsService {
       };
     } catch (error) {
       console.log(error);
-      throw new HttpException(
-        error?.message || 'Server error',
-        error?.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(error.message, error.status);
     }
   }
 }
