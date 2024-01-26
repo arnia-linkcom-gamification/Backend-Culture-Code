@@ -11,7 +11,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseCreateUserDoc } from './docs/response-create-user.doc';
 import { CreatedUserDoc } from './docs/create-user.doc';
 import { Roles } from 'src/decorators/role.decorator';
@@ -33,6 +33,7 @@ export class UsersController {
 
   @Get()
   @ApiResponse({ type: ResponseCreateUserDoc, isArray: true })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   async findAll() {

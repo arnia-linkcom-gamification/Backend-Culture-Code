@@ -39,7 +39,9 @@ export class UsersService {
 
   async findAll() {
     try {
-      return await this.usersRepository.find();
+      return await this.usersRepository.find({
+        relations: ['jewels', 'products'],
+      });
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
