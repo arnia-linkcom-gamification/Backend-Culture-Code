@@ -46,7 +46,6 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
-
   @UseGuards(AuthGuard, RolesGuard)
   @ApiResponse({ type: ResponsePaginationListProductDoc })
   @ApiQuery({ type: PaginationListProductDoc })
