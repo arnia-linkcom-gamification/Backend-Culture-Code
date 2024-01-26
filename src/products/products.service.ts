@@ -99,7 +99,7 @@ export class ProductsService {
       const products = await queryBuilder.getMany();
 
       if (products.length === 0) {
-        throw new NotFoundException('There is not product to this filter');
+        throw new NotFoundException('There is not product to this filter.');
       }
       return products;
     } catch (error) {
