@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -13,6 +14,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseCreateUserDoc } from './docs/response-create-user.doc';
 import { CreatedUserDoc } from './docs/create-user.doc';
+import { Roles } from 'src/decorators/role.decorator';
+import { RoleEnum } from 'src/enums/role.enum';
+import { AuthGuard } from 'src/auth/guards/auth-guard';
+import { RolesGuard } from 'src/auth/guards/roles-guard';
 
 @Controller('users')
 @ApiTags('Usuários')
@@ -27,6 +32,9 @@ export class UsersController {
   }
 
   @Get()
+  @ApiResponse({ type: ResponseCreateUserDoc, isArray: true })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.admin)
   async findAll() {
     return await this.usersService.findAll();
   }

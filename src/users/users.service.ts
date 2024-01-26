@@ -9,12 +9,12 @@ import { User } from './entities/user.entity';
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersReposytory: Repository<User>,
+    private usersRepository: Repository<User>,
   ) {}
 
   async create(payload: CreateUserDto) {
     try {
-      const emailExist = await this.usersReposytory.exists({
+      const emailExist = await this.usersRepository.exists({
         where: { email: payload.email },
       });
       if (emailExist) {
@@ -23,9 +23,9 @@ export class UsersService {
         );
       }
 
-      const newUser = this.usersReposytory.create(payload);
+      const newUser = this.usersRepository.create(payload);
 
-      await this.usersReposytory.save(newUser);
+      await this.usersRepository.save(newUser);
 
       const { ...newUserWithoutPass } = newUser;
       delete newUserWithoutPass.password;
@@ -38,7 +38,12 @@ export class UsersService {
   }
 
   async findAll() {
-    return `This action returns all users`;
+    try {
+      return await this.usersRepository.find();
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   async findOne(id: number) {
