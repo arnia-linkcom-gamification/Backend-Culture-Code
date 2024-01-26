@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -18,6 +19,11 @@ import { Roles } from 'src/decorators/role.decorator';
 import { RoleEnum } from 'src/enums/role.enum';
 import { AuthGuard } from 'src/auth/guards/auth-guard';
 import { RolesGuard } from 'src/auth/guards/roles-guard';
+<<<<<<< HEAD
+=======
+import { UserId } from 'src/decorators/userId.decorator';
+import { ResponseAllUsersDoc } from './docs/response-all-users.doc';
+>>>>>>> 8758e725affba11c22bb121fa8d901aa4b0030f0
 @ApiTags('Usuários')
 @Controller('users')
 export class UsersController {
@@ -32,15 +38,53 @@ export class UsersController {
 
   @Get()
   @ApiBearerAuth()
+<<<<<<< HEAD
   @ApiResponse({ type: ResponseCreateUserDoc, isArray: true })
+=======
+  @ApiResponse({ type: ResponseAllUsersDoc, isArray: true })
+  @ApiBearerAuth()
+>>>>>>> 8758e725affba11c22bb121fa8d901aa4b0030f0
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   async findAll() {
     return await this.usersService.findAll();
   }
 
+  @Get('me')
+  @ApiBearerAuth()
+  @ApiResponse({ type: ResponseAllUsersDoc })
+  @UseGuards(AuthGuard)
+  async me(@UserId() id: number) {
+    return await this.usersService.me(id);
+  }
+
+  // @Get('eu')
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard)
+  // async me(@UserId() id: number) {
+  //   return await this.usersService.me(id);
+  // }
+
+  // @Patch('eu')
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard)
+  // async edit(@UserId() id: number, @Body() payload: UpdateUserDto) {
+  //   return this.usersService.edit(id, payload);
+  // }
+
+  // @Delete('eu')
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard)
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // async deleteMe(@UserId() id: number) {
+  //   return await this.usersService.softDelete(id);
+  // }
+
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  @ApiBearerAuth()
+  @ApiResponse({ type: ResponseAllUsersDoc })
+  @UseGuards(AuthGuard)
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.usersService.findOne(+id);
   }
 

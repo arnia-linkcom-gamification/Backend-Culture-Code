@@ -45,7 +45,6 @@ export class ProductsController {
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
   }
-
   @UseGuards(AuthGuard, RolesGuard)
   @ApiResponse({ type: ResponsePaginationListProductDoc })
   @ApiQuery({ type: PaginationListProductDoc })
@@ -56,7 +55,6 @@ export class ProductsController {
   ) {
     return this.productsService.paginationListProduct(+page, +productsPerPage);
   }
-
   @UseGuards(AuthGuard, RolesGuard)
   @ApiResponse({ type: ResponseGetProductByFilterDoc })
   @ApiQuery({ type: GetProductByFilterDoc })
@@ -74,7 +72,6 @@ export class ProductsController {
       name,
     );
   }
-
   @UseGuards(AuthGuard, RolesGuard)
   @ApiResponse({ type: ResponseFindByIdDoc })
   @ApiParam({
