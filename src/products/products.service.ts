@@ -56,7 +56,7 @@ export class ProductsService {
         .skip((page - 1) * productsPerPage)
         .take(productsPerPage)
         .getMany();
-      const totalPages = allProducts / productsPerPage;
+      const totalPages = Math.ceil(allProducts / productsPerPage);
       const payload = {
         products,
         allProducts,
