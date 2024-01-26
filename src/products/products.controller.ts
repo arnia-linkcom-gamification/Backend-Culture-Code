@@ -10,6 +10,7 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
@@ -22,6 +23,7 @@ import { ResponsePaginationListProductDoc } from './docs/response-pagination-lis
 import { PaginationListProductDoc } from './docs/pagination-list-product.doc';
 import { ResponseGetProductByFilterDoc } from './docs/response-get-product-by-filter.doc';
 import { GetProductByFilterDoc } from './docs/get-product-by-filter.doc';
+import { ResponseDeleteProductDoc } from './docs/response-delete-product.doc';
 //import { UpdateProductDto } from './dto/update-product.dto';
 @ApiTags('Product')
 @Controller('products')
@@ -77,6 +79,11 @@ export class ProductsController {
   //   return this.productsService.update(+id, updateProductDto);
   // }
 
+  @ApiResponse({ type: ResponseDeleteProductDoc })
+  @ApiParam({
+    type: Number,
+    name: 'id',
+  })
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productsService.remove(+id);
