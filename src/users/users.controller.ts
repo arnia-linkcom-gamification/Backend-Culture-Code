@@ -39,11 +39,15 @@ export class UsersController {
   @Get()
   @ApiBearerAuth()
 <<<<<<< HEAD
+<<<<<<< HEAD
   @ApiResponse({ type: ResponseCreateUserDoc, isArray: true })
 =======
   @ApiResponse({ type: ResponseAllUsersDoc, isArray: true })
   @ApiBearerAuth()
 >>>>>>> 8758e725affba11c22bb121fa8d901aa4b0030f0
+=======
+  @ApiResponse({ type: ResponseCreateUserDoc, isArray: true })
+>>>>>>> 1aae78ee6a11ecdd828bb1554f7258d59cbb4a04
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   async findAll() {
