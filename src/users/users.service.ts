@@ -51,7 +51,7 @@ export class UsersService {
   }
 
   async update(id: number, payload: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    return `This action updates a #${id} user #${payload}`;
   }
 
   async remove(id: number) {
