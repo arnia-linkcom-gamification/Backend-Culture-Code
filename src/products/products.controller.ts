@@ -3,14 +3,10 @@ import {
   Get,
   Post,
   Body,
-  //Patch,
   Param,
   Delete,
   Query,
-  //UseInterceptors,
 } from '@nestjs/common';
-//import { FileInterceptor } from '@nestjs/platform-express';
-//import { diskStorage } from 'multer';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -34,7 +30,22 @@ export class ProductsController {
     @Query('page') page: number,
     @Query('productsPerPage') productsPerPage: number,
   ) {
-    return this.productsService.paginationListProduct(page, productsPerPage);
+    return this.productsService.paginationListProduct(+page, +productsPerPage);
+  }
+
+  @Get('/filter')
+  getProductByFilter(
+    @Query('page') page: number,
+    @Query('productsPerPage') productsPerPage: number,
+    @Query('price') price: number,
+    @Query('name') name: string,
+  ) {
+    return this.productsService.getProductByFilter(
+      +page,
+      +productsPerPage,
+      +price,
+      name,
+    );
   }
 
   @Get()
