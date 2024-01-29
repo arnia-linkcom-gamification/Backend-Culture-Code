@@ -19,16 +19,9 @@ import { Roles } from 'src/decorators/role.decorator';
 import { RoleEnum } from 'src/enums/role.enum';
 import { AuthGuard } from 'src/auth/guards/auth-guard';
 import { RolesGuard } from 'src/auth/guards/roles-guard';
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 import { UserId } from 'src/decorators/userId.decorator';
 import { ResponseAllUsersDoc } from './docs/response-all-users.doc';
->>>>>>> 8758e725affba11c22bb121fa8d901aa4b0030f0
-=======
-import { UserId } from 'src/decorators/userId.decorator';
-import { ResponseAllUsersDoc } from './docs/response-all-users.doc';
->>>>>>> 8b96acb7628b995a7b64d2e9b0a75c9c64323087
+
 @ApiTags('Usuários')
 @Controller('users')
 export class UsersController {
@@ -43,20 +36,8 @@ export class UsersController {
 
   @Get()
   @ApiBearerAuth()
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  @ApiResponse({ type: ResponseCreateUserDoc, isArray: true })
-=======
   @ApiResponse({ type: ResponseAllUsersDoc, isArray: true })
   @ApiBearerAuth()
->>>>>>> 8758e725affba11c22bb121fa8d901aa4b0030f0
-=======
-  @ApiResponse({ type: ResponseCreateUserDoc, isArray: true })
->>>>>>> 1aae78ee6a11ecdd828bb1554f7258d59cbb4a04
-=======
-  @ApiResponse({ type: ResponseCreateUserDoc, isArray: true })
->>>>>>> 8b96acb7628b995a7b64d2e9b0a75c9c64323087
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   async findAll() {
