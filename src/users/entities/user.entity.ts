@@ -40,7 +40,7 @@ export class User {
   role: RoleEnum;
 
   @Column({ type: 'integer', default: 0 })
-  credits: string;
+  credits: number;
 
   @ManyToMany(() => Jewel, (jewel) => jewel.users, {
     cascade: true,
@@ -68,6 +68,7 @@ export class User {
   async passwordHash() {
     try {
       this.password = await bcrypt.hash(this.password, 12);
+      console.log('Embaralhou a senha!');
     } catch (error) {
       console.log(error);
       throw new BadRequestException('Something went wrong with password hash.');

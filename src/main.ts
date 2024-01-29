@@ -8,13 +8,6 @@ import { darkMode } from './swagger/darkmode';
 async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('Arnia/Linkcom - Gamification')
-    .setDescription('API do projeto Gamification')
-    .setVersion('/v1')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
   app.setGlobalPrefix('/v1');
   app.useGlobalPipes(
     new ValidationPipe({
@@ -22,8 +15,19 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Arnia/Linkcom - Gamification')
+    .setDescription('API do projeto Gamification')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('docs', app, document, {
     customCss: darkMode,
+    swaggerOptions: {
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+    },
   });
   await app.listen(configService.get<number>('APP_PORT') || 3000);
 }

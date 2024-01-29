@@ -16,7 +16,7 @@ import { Roles } from 'src/decorators/role.decorator';
 import { AuthGuard } from 'src/auth/guards/auth-guard';
 import { RoleEnum } from 'src/enums/role.enum';
 import { RolesGuard } from 'src/auth/guards/roles-guard';
-@ApiTags('Joias')
+@ApiTags('4 - Jóias')
 @Controller('jewels')
 export class JewelsController {
   constructor(private readonly jewelsService: JewelsService) {}
