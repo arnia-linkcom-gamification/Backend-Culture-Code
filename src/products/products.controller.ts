@@ -33,7 +33,7 @@ import { Roles } from '../decorators/role.decorator';
 import { RoleEnum } from '../enums/role.enum';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ResponseUpdateProductDoc } from './docs/response-update-product.doc';
-@ApiTags('Produtos')
+@ApiTags('3 - Produtos')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}

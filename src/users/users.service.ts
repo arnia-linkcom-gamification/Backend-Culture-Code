@@ -53,16 +53,6 @@ export class UsersService {
     }
   }
 
-  async me(id: number) {
-    try {
-      const me = await this.findOne(id);
-      return me;
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
   async findOne(id: number) {
     try {
       const user = await this.usersRepository.findOne({
@@ -85,7 +75,34 @@ export class UsersService {
   }
 
   async update(id: number, payload: UpdateUserDto) {
-    return `This action updates a #${id} user #${payload}`;
+    try {
+      if (payload.confirmPassword && !payload.password) {
+        throw new BadRequestException("Passwords don't matches.");
+      }
+
+      if (payload.email) {
+        const emailExist = await this.usersRepository.exists({
+          where: { email: payload.email },
+        });
+        if (emailExist) {
+          throw new BadRequestException(
+            'An user with this email already exists.',
+          );
+        }
+      }
+
+      if (payload.password) {
+        const user = await this.findOne(id);
+        await this.usersRepository.save(Object.assign(user, payload));
+        return await this.findOne(id);
+      }
+
+      await this.usersRepository.update(id, payload);
+      return await this.findOne(id);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   async remove(id: number) {
