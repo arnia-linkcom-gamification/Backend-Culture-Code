@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  // Patch,
+  //Patch,
   Param,
   Delete,
   UseGuards,
@@ -20,8 +20,8 @@ import { RolesGuard } from 'src/auth/guards/roles-guard';
 @Controller('jewels')
 export class JewelsController {
   constructor(private readonly jewelsService: JewelsService) {}
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.admin)
   @Post()
   create(@Body() createJewelDto: CreateJewelDto) {
     return this.jewelsService.create(createJewelDto);

@@ -19,21 +19,10 @@ export class JewelsService {
 
   async create(createJewelDto: CreateJewelDto) {
     try {
-      const type = createJewelDto.type.toString();
-      //const jewelAlready = await this.findByType(createJewelDto.type);
-      const jewelAlready = await this.jewelRepository.findOne({
-        where: {
-          type,
-        },
-      });
-
-      // const jewelAlready = await this.jewelRepository.findOneOrFail({
-      //   where: { type },
-      // });
+      const jewelAlready = await this.findByType(createJewelDto.type);
 
       if (jewelAlready) {
         throw new ConflictException('This jewel already exists');
-        console.log(jewelAlready);
       }
 
       const newJewel = this.jewelRepository.create(createJewelDto);
