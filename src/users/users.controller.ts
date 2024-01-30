@@ -25,15 +25,15 @@ import { ResponseAllUsersDoc } from './docs/response-all-users.doc';
 @ApiTags('2 - Usuários')
 @ApiBearerAuth()
 @Controller('users')
-@UseGuards(AuthGuard)
+//@UseGuards(AuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @ApiBody({ type: CreatedUserDoc })
   @ApiResponse({ type: ResponseCreateUserDoc })
-  @UseGuards(RolesGuard)
-  @Roles(RoleEnum.admin)
+  // @UseGuards(RolesGuard)
+  // @Roles(RoleEnum.admin)
   async create(@Body() payload: CreateUserDto) {
     return await this.usersService.create(payload);
   }
@@ -41,12 +41,13 @@ export class UsersController {
   @Get()
   @ApiResponse({ type: ResponseAllUsersDoc, isArray: true })
   @ApiBearerAuth()
-  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   async findAll() {
     return await this.usersService.findAll();
   }
 
+  @UseGuards(AuthGuard)
   @Get('me')
   @ApiResponse({ type: ResponseAllUsersDoc })
   async me(@UserId() id: number) {
@@ -55,19 +56,20 @@ export class UsersController {
 
   @Get(':id')
   @ApiResponse({ type: ResponseAllUsersDoc })
-  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.usersService.findOne(id);
   }
 
+  @UseGuards(AuthGuard)
   @Patch('me')
   async updateMe(@UserId() id: number, @Body() payload: UpdateUserDto) {
     return this.usersService.update(id, payload);
   }
 
   @Patch(':id')
-  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -84,6 +86,7 @@ export class UsersController {
   //   return await this.usersService.softDelete(id);
   // }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return await this.usersService.remove(+id);

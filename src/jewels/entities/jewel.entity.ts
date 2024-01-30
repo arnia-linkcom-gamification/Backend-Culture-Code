@@ -20,7 +20,7 @@ export class Jewel {
   @Column({ type: 'text' })
   habilities: string;
 
-  @Column()
+  @Column({ type: 'text', nullable: true })
   image: string;
 
   @ManyToMany(() => User, (user) => user.jewels, {
