@@ -1,3 +1,4 @@
+import { JewelTypeEnum } from 'src/enums/jewel-type.enum';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -13,7 +14,7 @@ export class Jewel {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
-  @Column({ type: 'varchar', length: 32, unique: true })
+  @Column({ type: 'enum', enum: JewelTypeEnum, unique: true })
   type: string;
 
   @Column({ type: 'text' })

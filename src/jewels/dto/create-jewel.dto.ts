@@ -1,10 +1,10 @@
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { JewelTypeEnum } from 'src/enums/jewel-type.enum';
 
 export class CreateJewelDto {
-  @IsString()
-  @Length(0, 32)
+  @IsEnum(JewelTypeEnum)
   @IsNotEmpty()
-  type: string;
+  type: JewelTypeEnum;
 
   @IsString()
   @IsNotEmpty()
