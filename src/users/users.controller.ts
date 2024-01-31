@@ -23,17 +23,13 @@ import { UserId } from 'src/decorators/userId.decorator';
 import { ResponseAllUsersDoc } from './docs/response-all-users.doc';
 
 @ApiTags('2 - Usuários')
-@ApiBearerAuth()
 @Controller('users')
-//@UseGuards(AuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @ApiBody({ type: CreatedUserDoc })
   @ApiResponse({ type: ResponseCreateUserDoc })
-  // @UseGuards(RolesGuard)
-  // @Roles(RoleEnum.admin)
   async create(@Body() payload: CreateUserDto) {
     return await this.usersService.create(payload);
   }
@@ -47,28 +43,32 @@ export class UsersController {
     return await this.usersService.findAll();
   }
 
-  @UseGuards(AuthGuard)
   @Get('me')
+  @UseGuards(AuthGuard)
   @ApiResponse({ type: ResponseAllUsersDoc })
+  @ApiBearerAuth()
   async me(@UserId() id: number) {
     return await this.usersService.findOne(id);
   }
 
   @Get(':id')
   @ApiResponse({ type: ResponseAllUsersDoc })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.usersService.findOne(id);
   }
 
-  @UseGuards(AuthGuard)
   @Patch('me')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   async updateMe(@UserId() id: number, @Body() payload: UpdateUserDto) {
     return this.usersService.update(id, payload);
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   async update(
@@ -86,8 +86,9 @@ export class UsersController {
   //   return await this.usersService.softDelete(id);
   // }
 
-  @UseGuards(AuthGuard)
   @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   async remove(@Param('id') id: string) {
     return await this.usersService.remove(+id);
   }
