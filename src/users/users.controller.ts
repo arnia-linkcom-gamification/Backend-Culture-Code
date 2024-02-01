@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   ParseIntPipe,
+  HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -37,13 +38,17 @@ export class UsersController {
 
   @Post()
   @ApiBody({ type: CreatedUserDoc })
-  @ApiResponse({ type: ResponseCreateUserDoc })
+  @ApiResponse({ type: ResponseCreateUserDoc, status: HttpStatus.CREATED })
   async create(@Body() payload: CreateUserDto) {
     return await this.usersService.create(payload);
   }
 
   @Get()
-  @ApiResponse({ type: ResponseAllUsersDoc, isArray: true })
+  @ApiResponse({
+    type: ResponseAllUsersDoc,
+    isArray: true,
+    status: HttpStatus.OK,
+  })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
@@ -52,15 +57,15 @@ export class UsersController {
   }
 
   @Get('me')
-  @UseGuards(AuthGuard)
-  @ApiResponse({ type: ResponseAllUsersDoc })
+  @ApiResponse({ type: ResponseAllUsersDoc, status: HttpStatus.OK })
   @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   async me(@UserId() id: number) {
     return await this.usersService.findOne(id);
   }
 
   @Get(':id')
-  @ApiResponse({ type: ResponseAllUsersDoc })
+  @ApiResponse({ type: ResponseAllUsersDoc, status: HttpStatus.OK })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
@@ -70,7 +75,7 @@ export class UsersController {
 
   @Patch('me')
   @ApiBody({ type: UpdateUserDoc })
-  @ApiResponse({ type: ResponseUpdateUserDoc })
+  @ApiResponse({ type: ResponseUpdateUserDoc, status: HttpStatus.OK })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async updateMe(@UserId() id: number, @Body() payload: UpdateUserDto) {
@@ -85,7 +90,7 @@ export class UsersController {
     required: true,
   })
   @ApiBody({ type: UpdateUserDoc })
-  @ApiResponse({ type: ResponseUpdateUserDoc })
+  @ApiResponse({ type: ResponseUpdateUserDoc, status: HttpStatus.OK })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
