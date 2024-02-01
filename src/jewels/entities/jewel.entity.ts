@@ -15,7 +15,7 @@ export class Jewel {
   id: number;
 
   @Column({ type: 'enum', enum: JewelTypeEnum, unique: true })
-  type: string;
+  type: JewelTypeEnum;
 
   @Column({ type: 'text' })
   habilities: string;

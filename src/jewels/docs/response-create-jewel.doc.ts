@@ -16,11 +16,11 @@ export class ResponseCreateJewelDoc {
   habilities: string;
 
   @ApiProperty({
-    type: null,
+    type: String,
     description: 'É o caminho da imagem referente a joia cadastrada',
     example: null,
   })
-  image: null;
+  image: string;
 
   @ApiProperty({
     type: Number,

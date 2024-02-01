@@ -32,6 +32,7 @@ export class ResponseCreateProductDoc {
     type: String,
     description: 'Caminho do arquivo',
     example: null,
+    nullable: true,
   })
   image: string;
 

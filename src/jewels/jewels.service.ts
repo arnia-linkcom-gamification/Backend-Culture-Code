@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateJewelDto } from './dto/create-jewel.dto';
 //import { UpdateJewelDto } from './dto/update-jewel.dto';
 import { Jewel } from './entities/jewel.entity';
+import { JewelTypeEnum } from 'src/enums/jewel-type.enum';
 
 @Injectable()
 export class JewelsService {
@@ -19,9 +20,7 @@ export class JewelsService {
 
   async create(createJewelDto: CreateJewelDto) {
     try {
-      const jewelAlready = await this.jewelRepository.exists({
-        where: { type: createJewelDto.type },
-      });
+      const jewelAlready = await this.findByType(createJewelDto.type);
 
       if (jewelAlready) {
         throw new ConflictException('This jewel already exists');
@@ -67,7 +66,7 @@ export class JewelsService {
     }
   }
 
-  async findByType(type: string) {
+  async findByType(type: JewelTypeEnum) {
     try {
       const jewelAlready = await this.jewelRepository.findOne({
         where: {

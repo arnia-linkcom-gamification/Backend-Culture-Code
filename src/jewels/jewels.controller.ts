@@ -23,11 +23,11 @@ import { ResponseCreateJewelDoc } from './docs/response-create-jewel.doc';
 export class JewelsController {
   constructor(private readonly jewelsService: JewelsService) {}
   @Post()
-  // @ApiBody({ type: CreateJewelDoc })
-  // @ApiResponse({ type: ResponseCreateJewelDoc })
-  // @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
+  @ApiResponse({ type: ResponseCreateJewelDoc })
+  @ApiBody({ type: CreateJewelDoc })
+  @ApiBearerAuth()
   create(@Body() createJewelDto: CreateJewelDto) {
     return this.jewelsService.create(createJewelDto);
   }

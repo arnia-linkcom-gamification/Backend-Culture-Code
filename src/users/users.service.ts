@@ -9,6 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { Product } from 'src/products/entities/product.entity';
 
 @Injectable()
 export class UsersService {
@@ -107,5 +108,15 @@ export class UsersService {
 
   async remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async redeemProduct(id: number, productRedeem: Product) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['products'],
+    });
+    user.products.push(productRedeem);
+    await this.usersRepository.save(Object.assign(user));
+    return user;
   }
 }
