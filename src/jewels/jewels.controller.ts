@@ -22,26 +22,28 @@ import { CreateJewelDoc } from './docs/create-jewel.doc';
 @Controller('jewels')
 export class JewelsController {
   constructor(private readonly jewelsService: JewelsService) {}
+  @Post()
   @ApiResponse({ type: ResponseCreateJewelDoc })
   @ApiBody({ type: CreateJewelDoc })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
-  @Post()
   create(@Body() createJewelDto: CreateJewelDto) {
     return this.jewelsService.create(createJewelDto);
   }
 
+  @Get()
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @Get()
   findAll() {
     return this.jewelsService.findAll();
   }
 
+  @Get(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   findOne(@Param('id') id: string) {
     return this.jewelsService.findOne(+id);
   }

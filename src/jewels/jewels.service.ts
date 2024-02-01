@@ -20,7 +20,9 @@ export class JewelsService {
 
   async create(createJewelDto: CreateJewelDto) {
     try {
-      const jewelAlready = await this.findByType(createJewelDto.type);
+      const jewelAlready = await this.jewelRepository.exists({
+        where: { type: createJewelDto.type },
+      });
 
       if (jewelAlready) {
         throw new ConflictException('This jewel already exists');
@@ -84,8 +86,19 @@ export class JewelsService {
     return `This action returns all jewels`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} jewel`;
+  async findOne(id: number) {
+    try {
+      const jewel = await this.jewelRepository.findOneOrFail({
+        where: { id },
+      });
+      if (!jewel) {
+        throw new NotFoundException('Jewel not found');
+      }
+      return jewel;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   // update(id: number, updateJewelDto: UpdateJewelDto) {
