@@ -12,7 +12,13 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ResponseCreateUserDoc } from './docs/response-create-user.doc';
 import { CreatedUserDoc } from './docs/create-user.doc';
 import { Roles } from 'src/decorators/role.decorator';
@@ -21,6 +27,8 @@ import { AuthGuard } from 'src/auth/guards/auth-guard';
 import { RolesGuard } from 'src/auth/guards/roles-guard';
 import { UserId } from 'src/decorators/userId.decorator';
 import { ResponseAllUsersDoc } from './docs/response-all-users.doc';
+import { ResponseUpdateUserDoc } from './docs/response-update-user.doc';
+import { UpdateUserDoc } from './docs/update-user.docs';
 
 @ApiTags('2 - Usuários')
 @Controller('users')
@@ -61,13 +69,23 @@ export class UsersController {
   }
 
   @Patch('me')
-  @UseGuards(AuthGuard)
+  @ApiBody({ type: UpdateUserDoc })
+  @ApiResponse({ type: ResponseUpdateUserDoc })
   @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   async updateMe(@UserId() id: number, @Body() payload: UpdateUserDto) {
     return this.usersService.update(id, payload);
   }
 
   @Patch(':id')
+  @ApiParam({
+    name: 'id',
+    example: '2',
+    description: 'O id do usuário:',
+    required: true,
+  })
+  @ApiBody({ type: UpdateUserDoc })
+  @ApiResponse({ type: ResponseUpdateUserDoc })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
