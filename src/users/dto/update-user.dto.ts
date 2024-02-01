@@ -30,10 +30,6 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @Match('password', { message: "Passwords don't matches." })
   confirmPassword: string;
 
-  @IsString()
-  @IsOptional()
-  profileImg: string;
-
   @IsNumber()
   @IsOptional()
   credits: number;
