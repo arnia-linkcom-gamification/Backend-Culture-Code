@@ -10,12 +10,14 @@ import { CreateJewelDto } from './dto/create-jewel.dto';
 //import { UpdateJewelDto } from './dto/update-jewel.dto';
 import { Jewel } from './entities/jewel.entity';
 import { JewelTypeEnum } from 'src/enums/jewel-type.enum';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class JewelsService {
   constructor(
     @InjectRepository(Jewel)
     private jewelRepository: Repository<Jewel>,
+    private userService: UsersService,
   ) {}
 
   async create(createJewelDto: CreateJewelDto) {
@@ -98,6 +100,18 @@ export class JewelsService {
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async putJewel(idJewel: number, idUser: number) {
+    try {
+      const user = await this.userService.findOne(idUser);
+
+      const jewel = await this.findOne(idJewel);
+
+      
+    } catch (error) {
+      
     }
   }
 

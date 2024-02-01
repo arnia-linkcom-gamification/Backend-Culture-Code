@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpStatus,
 } from '@nestjs/common';
 import { JewelsService } from './jewels.service';
 import { CreateJewelDto } from './dto/create-jewel.dto';
@@ -16,15 +17,15 @@ import { Roles } from 'src/decorators/role.decorator';
 import { AuthGuard } from 'src/auth/guards/auth-guard';
 import { RoleEnum } from 'src/enums/role.enum';
 import { RolesGuard } from 'src/auth/guards/roles-guard';
-import { ResponseCreateJewelDoc } from './docs/response-create-jewel.doc';
 import { CreateJewelDoc } from './docs/create-jewel.doc';
+import { ResponseCreateJewelDoc } from './docs/response-create-jewel.doc';
 @ApiTags('4 - Joias')
 @Controller('jewels')
 export class JewelsController {
   constructor(private readonly jewelsService: JewelsService) {}
   @Post()
-  @ApiResponse({ type: ResponseCreateJewelDoc })
   @ApiBody({ type: CreateJewelDoc })
+  @ApiResponse({ type: ResponseCreateJewelDoc, status: HttpStatus.CREATED })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
@@ -33,15 +34,11 @@ export class JewelsController {
   }
 
   @Get()
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   findAll() {
     return this.jewelsService.findAll();
   }
 
   @Get(':id')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   findOne(@Param('id') id: string) {
@@ -52,6 +49,11 @@ export class JewelsController {
   // update(@Param('id') id: string, @Body() updateJewelDto: UpdateJewelDto) {
   //   return this.jewelsService.update(+id, updateJewelDto);
   // }
+
+  @Post()
+  putJewel(@Param('idJewel') idJewel: string, @Param('idUser') idUser: string) {
+    return this.jewelsService.putJewel(+idJewel, +idUser);
+  }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
