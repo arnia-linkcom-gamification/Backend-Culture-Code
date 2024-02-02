@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  //Patch,
+  Patch,
   Param,
   Delete,
   UseGuards,
@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { JewelsService } from './jewels.service';
 import { CreateJewelDto } from './dto/create-jewel.dto';
-//import { UpdateJewelDto } from './dto/update-jewel.dto';
+import { UpdateJewelDto } from './dto/update-jewel.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -27,6 +27,8 @@ import { RolesGuard } from 'src/auth/guards/roles-guard';
 import { CreateJewelDoc } from './docs/create-jewel.doc';
 import { ResponseCreateJewelDoc } from './docs/response-create-jewel.doc';
 import { ResponseFindJewelById } from './docs/response-find-jewel-by-id.doc';
+import { ResponseUpdateJewelDoc } from './docs/response-update-jewel.doc';
+import { ResponsePutJewelDoc } from './docs/response-put-jewel.doc';
 @ApiTags('4 - Joias')
 @Controller('jewels')
 export class JewelsController {
@@ -61,13 +63,21 @@ export class JewelsController {
     return this.jewelsService.findOne(+id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateJewelDto: UpdateJewelDto) {
-  //   return this.jewelsService.update(+id, updateJewelDto);
-  // }
+  @Patch(':id')
+  @ApiBearerAuth()
+  @ApiResponse({ type: ResponseUpdateJewelDoc })
+  @ApiParam({
+    type: Number,
+    name: 'id',
+  })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.admin)
+  update(@Param('id') id: string, @Body() updateJewelDto: UpdateJewelDto) {
+    return this.jewelsService.update(+id, updateJewelDto);
+  }
 
   @Post(':idJewel/user/:idUser')
-  //@ApiResponse({ type: ResponsePutJewelDoc })
+  @ApiResponse({ type: ResponsePutJewelDoc })
   @ApiBearerAuth()
   @ApiParam({
     type: Number,
