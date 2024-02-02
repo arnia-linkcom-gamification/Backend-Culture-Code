@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   ParseIntPipe,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,6 +17,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiNoContentResponse,
   ApiParam,
   ApiResponse,
   ApiTags,
@@ -37,13 +40,17 @@ export class UsersController {
 
   @Post()
   @ApiBody({ type: CreatedUserDoc })
-  @ApiResponse({ type: ResponseCreateUserDoc })
+  @ApiResponse({ type: ResponseCreateUserDoc, status: HttpStatus.CREATED })
   async create(@Body() payload: CreateUserDto) {
     return await this.usersService.create(payload);
   }
 
   @Get()
-  @ApiResponse({ type: ResponseAllUsersDoc, isArray: true })
+  @ApiResponse({
+    type: ResponseAllUsersDoc,
+    isArray: true,
+    status: HttpStatus.OK,
+  })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
@@ -52,15 +59,15 @@ export class UsersController {
   }
 
   @Get('me')
-  @UseGuards(AuthGuard)
-  @ApiResponse({ type: ResponseAllUsersDoc })
+  @ApiResponse({ type: ResponseAllUsersDoc, status: HttpStatus.OK })
   @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   async me(@UserId() id: number) {
     return await this.usersService.findOne(id);
   }
 
   @Get(':id')
-  @ApiResponse({ type: ResponseAllUsersDoc })
+  @ApiResponse({ type: ResponseAllUsersDoc, status: HttpStatus.OK })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
@@ -70,7 +77,7 @@ export class UsersController {
 
   @Patch('me')
   @ApiBody({ type: UpdateUserDoc })
-  @ApiResponse({ type: ResponseUpdateUserDoc })
+  @ApiResponse({ type: ResponseUpdateUserDoc, status: HttpStatus.OK })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async updateMe(@UserId() id: number, @Body() payload: UpdateUserDto) {
@@ -85,7 +92,7 @@ export class UsersController {
     required: true,
   })
   @ApiBody({ type: UpdateUserDoc })
-  @ApiResponse({ type: ResponseUpdateUserDoc })
+  @ApiResponse({ type: ResponseUpdateUserDoc, status: HttpStatus.OK })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
@@ -96,18 +103,32 @@ export class UsersController {
     return await this.usersService.update(id, payload);
   }
 
-  // @Delete('me')
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard)
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // async deleteMe(@UserId() id: number) {
-  //   return await this.usersService.softDelete(id);
-  // }
-
-  @Delete(':id')
+  @Delete('me')
+  @ApiNoContentResponse()
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  async remove(@Param('id') id: string) {
-    return await this.usersService.remove(+id);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteMe(@UserId() id: number) {
+    return await this.usersService.softDelete(id);
+  }
+
+  @Delete(':id')
+  @ApiNoContentResponse()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.admin)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return await this.usersService.softDelete(id);
+  }
+
+  @Patch(':id/restore')
+  @ApiNoContentResponse()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.admin)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async restore(@Param('id', ParseIntPipe) id: number) {
+    return await this.usersService.restore(id);
   }
 }

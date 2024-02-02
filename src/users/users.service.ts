@@ -116,7 +116,21 @@ export class UsersService {
     return user;
   }
 
-  async remove(id: number) {
-    return `This action removes a #${id} user`;
+  async softDelete(id: number) {
+    try {
+      return await this.usersRepository.softDelete(id);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async restore(id: number) {
+    try {
+      return await this.usersRepository.restore(id);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
   }
 }
