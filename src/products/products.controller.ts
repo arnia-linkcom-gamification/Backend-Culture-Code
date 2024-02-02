@@ -7,7 +7,7 @@ import {
   Delete,
   Query,
   UseGuards,
-  Put,
+  Patch,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -37,19 +37,19 @@ import { ResponseUpdateProductDoc } from './docs/response-update-product.doc';
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
+  @Post()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   @ApiResponse({ type: ResponseCreateProductDoc })
   @ApiBody({ type: CreatedProductDoc })
   @ApiBearerAuth()
-  @Post()
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
   }
 
+  @Get()
   @ApiResponse({ type: ResponsePaginationListProductDoc })
   @ApiQuery({ type: PaginationListProductDoc })
-  @Get()
   paginationListProduct(
     @Query('page') page: number,
     @Query('productsPerPage') productsPerPage: number,
@@ -57,9 +57,9 @@ export class ProductsController {
     return this.productsService.paginationListProduct(+page, +productsPerPage);
   }
 
+  @Get('/filter')
   @ApiResponse({ type: ResponseGetProductByFilterDoc })
   @ApiQuery({ type: GetProductByFilterDoc })
-  @Get('/filter')
   getProductByFilter(
     @Query('page') page: string,
     @Query('productsPerPage') productsPerPage: string,
@@ -74,17 +74,18 @@ export class ProductsController {
     );
   }
 
+  @Get(':id')
   @UseGuards(AuthGuard)
   @ApiResponse({ type: ResponseFindByIdDoc })
   @ApiParam({
     type: Number,
     name: 'id',
   })
-  @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(+id);
   }
 
+  @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   @ApiResponse({ type: ResponseUpdateProductDoc })
@@ -92,11 +93,11 @@ export class ProductsController {
     type: Number,
     name: 'id',
   })
-  @Put(':id')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productsService.update(+id, updateProductDto);
   }
 
+  @Delete(':id')
   @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard, RolesGuard)
   @ApiResponse({ type: ResponseDeleteProductDoc })
@@ -105,7 +106,6 @@ export class ProductsController {
     name: 'id',
   })
   @ApiBearerAuth()
-  @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productsService.remove(+id);
   }

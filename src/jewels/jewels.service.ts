@@ -82,8 +82,8 @@ export class JewelsService {
     }
   }
 
-  findAll() {
-    return `This action returns all jewels`;
+  async findAll() {
+    return await this.jewelRepository.find();
   }
 
   async findOne(id: number) {

@@ -33,6 +33,7 @@ export class JewelsController {
   }
 
   @Get()
+  @ApiResponse({ type: ResponseCreateJewelDoc })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   findAll() {
