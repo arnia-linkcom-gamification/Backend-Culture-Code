@@ -43,6 +43,9 @@ export class JewelsController {
   }
 
   @Get()
+  @ApiResponse({ type: ResponseCreateJewelDoc })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   findAll() {
     return this.jewelsService.findAll();
