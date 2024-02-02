@@ -9,6 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { Jewel } from 'src/jewels/entities/jewel.entity';
 
 @Injectable()
 export class UsersService {
@@ -103,6 +104,16 @@ export class UsersService {
       console.log(error);
       throw new HttpException(error.message, error.status);
     }
+  }
+
+  async putJewel(id: number, jewelPutted: Jewel) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['jewels'],
+    });
+    user.jewels.push(jewelPutted);
+    await this.usersRepository.save(Object.assign(user));
+    return user;
   }
 
   async remove(id: number) {

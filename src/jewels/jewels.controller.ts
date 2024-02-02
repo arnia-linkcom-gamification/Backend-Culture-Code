@@ -8,17 +8,25 @@ import {
   Delete,
   UseGuards,
   HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { JewelsService } from './jewels.service';
 import { CreateJewelDto } from './dto/create-jewel.dto';
 //import { UpdateJewelDto } from './dto/update-jewel.dto';
-import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Roles } from 'src/decorators/role.decorator';
 import { AuthGuard } from 'src/auth/guards/auth-guard';
 import { RoleEnum } from 'src/enums/role.enum';
 import { RolesGuard } from 'src/auth/guards/roles-guard';
 import { CreateJewelDoc } from './docs/create-jewel.doc';
 import { ResponseCreateJewelDoc } from './docs/response-create-jewel.doc';
+import { ResponseFindJewelById } from './docs/response-find-jewel-by-id.doc';
 @ApiTags('4 - Joias')
 @Controller('jewels')
 export class JewelsController {
@@ -29,18 +37,26 @@ export class JewelsController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() createJewelDto: CreateJewelDto) {
     return this.jewelsService.create(createJewelDto);
   }
 
   @Get()
+  @HttpCode(HttpStatus.OK)
   findAll() {
     return this.jewelsService.findAll();
   }
 
   @Get(':id')
+  @ApiResponse({ type: ResponseFindJewelById })
+  @ApiParam({
+    type: Number,
+    name: 'id',
+  })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: string) {
     return this.jewelsService.findOne(+id);
   }
@@ -50,12 +66,26 @@ export class JewelsController {
   //   return this.jewelsService.update(+id, updateJewelDto);
   // }
 
-  @Post()
+  @Post(':idJewel/user/:idUser')
+  //@ApiResponse({ type: ResponsePutJewelDoc })
+  @ApiBearerAuth()
+  @ApiParam({
+    type: Number,
+    name: 'idJewel',
+  })
+  @ApiParam({
+    type: Number,
+    name: 'idUser',
+  })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.admin)
+  @HttpCode(HttpStatus.OK)
   putJewel(@Param('idJewel') idJewel: string, @Param('idUser') idUser: string) {
     return this.jewelsService.putJewel(+idJewel, +idUser);
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.jewelsService.remove(+id);
   }

@@ -109,9 +109,12 @@ export class JewelsService {
 
       const jewel = await this.findOne(idJewel);
 
-      
+      await this.userService.putJewel(idUser, jewel);
+
+      return user;
     } catch (error) {
-      
+      console.log(error);
+      throw new HttpException(error.message, error.status);
     }
   }
 
