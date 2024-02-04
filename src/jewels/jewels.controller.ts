@@ -5,7 +5,6 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   UseGuards,
   HttpStatus,
   HttpCode,
@@ -95,11 +94,5 @@ export class JewelsController {
   @HttpCode(HttpStatus.OK)
   putJewel(@Param('idJewel') idJewel: string, @Param('idUser') idUser: string) {
     return this.jewelsService.putJewel(+idJewel, +idUser);
-  }
-
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    return this.jewelsService.remove(+id);
   }
 }

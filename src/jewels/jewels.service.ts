@@ -150,8 +150,4 @@ export class JewelsService {
       throw new HttpException(error.message, error.status);
     }
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} jewel`;
-  }
 }
