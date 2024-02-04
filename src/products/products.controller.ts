@@ -7,7 +7,9 @@ import {
   Delete,
   Query,
   UseGuards,
-  Put,
+  Patch,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -33,6 +35,7 @@ import { Roles } from '../decorators/role.decorator';
 import { RoleEnum } from '../enums/role.enum';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ResponseUpdateProductDoc } from './docs/response-update-product.doc';
+import { ResponseRedeemProductDoc } from './docs/response-redeem-product.doc';
 
 @ApiTags('3 - Produtos')
 @Controller('products')
@@ -44,6 +47,7 @@ export class ProductsController {
   @ApiResponse({ type: ResponseCreateProductDoc })
   @ApiBody({ type: CreatedProductDoc })
   @ApiBearerAuth()
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
   }
@@ -51,6 +55,7 @@ export class ProductsController {
   @Get()
   @ApiResponse({ type: ResponsePaginationListProductDoc })
   @ApiQuery({ type: PaginationListProductDoc })
+  @HttpCode(HttpStatus.OK)
   paginationListProduct(
     @Query('page') page: number,
     @Query('productsPerPage') productsPerPage: number,
@@ -61,6 +66,7 @@ export class ProductsController {
   @Get('/filter')
   @ApiResponse({ type: ResponseGetProductByFilterDoc })
   @ApiQuery({ type: GetProductByFilterDoc })
+  @HttpCode(HttpStatus.OK)
   getProductByFilter(
     @Query('page') page: string,
     @Query('productsPerPage') productsPerPage: string,
@@ -82,11 +88,12 @@ export class ProductsController {
     type: Number,
     name: 'id',
   })
+  @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(+id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   @ApiResponse({ type: ResponseUpdateProductDoc })
@@ -94,6 +101,7 @@ export class ProductsController {
     type: Number,
     name: 'id',
   })
+  @HttpCode(HttpStatus.OK)
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productsService.update(+id, updateProductDto);
   }
@@ -107,11 +115,26 @@ export class ProductsController {
     name: 'id',
   })
   @ApiBearerAuth()
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.productsService.remove(+id);
   }
 
   @Post(':idProduct/user/:idUser')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiResponse({ type: ResponseRedeemProductDoc })
+  @ApiParam({
+    type: Number,
+    name: 'idProduct',
+    description:
+      'É o número do id do produto que o usuário selecionou para o resgate',
+  })
+  @ApiParam({
+    type: Number,
+    name: 'idUser',
+    description: 'É o número do id do usuário que está pedindo o resgate',
+  })
   redeemProduct(
     @Param('idProduct') idProduct: string,
     @Param('idUser') idUser: string,

@@ -6,9 +6,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './entities/product.entity';
-import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
@@ -166,15 +166,24 @@ export class ProductsService {
 
       const user = await this.userService.findOne(idUser);
 
+      //const creditsUsed = user.credits - product.price;
+
       if (user.credits >= product.price) {
-        const creditsUsed: UpdateUserDto = {
-          credits: user.credits - product.price,
-        };
-        const subtractCredits = await this.userService.update(
-          idUser,
-          creditsUsed as UpdateUserDto,
-        );
-        console.log(177, subtractCredits);
+        for (let i = 0; i < product.price; i++) {
+          if (user.jewels.length === 0) {
+            throw new BadRequestException('Insufficient jewelry balance');
+          }
+          const userCreditUpdated: UpdateUserDto = {
+            credits: user.credits - 1,
+            password: user.password,
+            confirmPassword: user.password,
+          };
+          await this.userService.update(idUser, userCreditUpdated);
+
+          const jewelRemove = user.jewels[i].id;
+          await this.userService.removeJewel(idUser, jewelRemove);
+        }
+
         const userUpdated = await this.userService.redeemProduct(
           idUser,
           product,

@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsString,
   IsStrongPassword,
+  IsUrl,
   Length,
   MaxLength,
   MinLength,
@@ -27,6 +28,10 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MaxLength(128)
   email: string;
+
+  @IsUrl()
+  @IsOptional()
+  profileImg: string;
 
   @IsString()
   @IsNotEmpty()

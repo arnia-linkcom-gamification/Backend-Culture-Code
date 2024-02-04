@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { RoleEnum } from 'src/enums/role.enum';
 
-export class ResponseCreateUserDoc {
+export class ResponseUpdateUserDoc {
   @ApiProperty({
     type: String,
     description: 'Refere-se ao id do usuário no banco de dados.',
@@ -12,7 +12,7 @@ export class ResponseCreateUserDoc {
   @ApiProperty({
     type: String,
     description: 'Refere-se ao nome do usuário.',
-    example: 'Fulano',
+    example: 'Beltrano',
   })
   firstName: string;
 
@@ -26,7 +26,7 @@ export class ResponseCreateUserDoc {
   @ApiProperty({
     type: String,
     description: 'Refere-se ao email do usuário.',
-    example: 'fulano@usuario.com',
+    example: 'beltrano@usuario.com',
   })
   email: string;
 
@@ -72,4 +72,18 @@ export class ResponseCreateUserDoc {
     example: '2024-01-24T23:00:56.481Z',
   })
   updatedAt: Date;
+
+  @ApiProperty({
+    type: Array,
+    description: 'Refere-se as jóias do usuário.',
+    example: [],
+  })
+  jewels: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'Refere-se aos produtos do usuário.',
+    example: [],
+  })
+  products: string;
 }

@@ -10,9 +10,6 @@ import {
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
-import { JewelsService } from './jewels.service';
-import { CreateJewelDto } from './dto/create-jewel.dto';
-import { UpdateJewelDto } from './dto/update-jewel.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -20,6 +17,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JewelsService } from './jewels.service';
+import { CreateJewelDto } from './dto/create-jewel.dto';
+import { UpdateJewelDto } from './dto/update-jewel.dto';
 import { Roles } from 'src/decorators/role.decorator';
 import { AuthGuard } from 'src/auth/guards/auth-guard';
 import { RoleEnum } from 'src/enums/role.enum';
