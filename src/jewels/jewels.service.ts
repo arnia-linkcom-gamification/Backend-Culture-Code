@@ -7,20 +7,24 @@ import {
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateJewelDto } from './dto/create-jewel.dto';
-//import { UpdateJewelDto } from './dto/update-jewel.dto';
+import { UpdateJewelDto } from './dto/update-jewel.dto';
 import { Jewel } from './entities/jewel.entity';
 import { JewelTypeEnum } from 'src/enums/jewel-type.enum';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class JewelsService {
   constructor(
     @InjectRepository(Jewel)
     private jewelRepository: Repository<Jewel>,
+    private userService: UsersService,
   ) {}
 
   async create(createJewelDto: CreateJewelDto) {
     try {
-      const jewelAlready = await this.findByType(createJewelDto.type);
+      const jewelAlready = await this.jewelRepository.exists({
+        where: { type: createJewelDto.type },
+      });
 
       if (jewelAlready) {
         throw new ConflictException('This jewel already exists');
@@ -73,6 +77,7 @@ export class JewelsService {
           type,
         },
       });
+
       return jewelAlready;
     } catch (error) {
       console.log(error);
@@ -80,8 +85,8 @@ export class JewelsService {
     }
   }
 
-  findAll() {
-    return `This action returns all jewels`;
+  async findAll() {
+    return await this.jewelRepository.find();
   }
 
   async findOne(id: number) {
@@ -89,9 +94,11 @@ export class JewelsService {
       const jewel = await this.jewelRepository.findOneOrFail({
         where: { id },
       });
+
       if (!jewel) {
         throw new NotFoundException('Jewel not found');
       }
+
       return jewel;
     } catch (error) {
       console.log(error);
@@ -99,9 +106,38 @@ export class JewelsService {
     }
   }
 
-  // update(id: number, updateJewelDto: UpdateJewelDto) {
-  //   return `This action updates a #${id} jewel`;
-  // }
+  async putJewel(idJewel: number, idUser: number) {
+    try {
+      const user = await this.userService.findOne(idUser);
+
+      const jewel = await this.findOne(idJewel);
+
+      await this.userService.putJewel(idUser, jewel);
+
+      return user;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async update(id: number, updateJewelDto: UpdateJewelDto) {
+    try {
+      const { affected } = await this.jewelRepository.update(
+        id,
+        updateJewelDto,
+      );
+
+      if (affected === 0) {
+        throw new NotFoundException('Jewel not exist');
+      }
+
+      return await this.findOne(id);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
+  }
 
   remove(id: number) {
     return `This action removes a #${id} jewel`;
