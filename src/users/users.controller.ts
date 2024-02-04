@@ -20,6 +20,7 @@ import {
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
+  ApiOkResponse,
   ApiParam,
   ApiResponse,
   ApiTags,
@@ -52,10 +53,9 @@ export class UsersController {
   }
 
   @Get()
-  @ApiResponse({
+  @ApiOkResponse({
     type: ResponseAllUsersDoc,
     isArray: true,
-    status: HttpStatus.OK,
   })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)

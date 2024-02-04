@@ -5,7 +5,7 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
+  // Delete,
   UseGuards,
   HttpStatus,
   HttpCode,
@@ -19,6 +19,7 @@ import {
   ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiParam,
   ApiResponse,
   ApiTags,
@@ -56,10 +57,9 @@ export class JewelsController {
   }
 
   @Get()
-  @ApiResponse({ type: ResponseCreateJewelDoc })
+  @ApiOkResponse({ type: ResponseCreateJewelDoc, isArray: true })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @HttpCode(HttpStatus.OK)
   findAll() {
     return this.jewelsService.findAll();
   }
@@ -108,9 +108,9 @@ export class JewelsController {
     return this.jewelsService.putJewel(+idJewel, +idUser);
   }
 
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    return this.jewelsService.remove(+id);
-  }
+  // @Delete(':id')
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // remove(@Param('id') id: string) {
+  //   return this.jewelsService.remove(+id);
+  // }
 }

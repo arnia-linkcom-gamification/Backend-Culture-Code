@@ -9,7 +9,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateJewelDto } from './dto/create-jewel.dto';
 import { UpdateJewelDto } from './dto/update-jewel.dto';
 import { Jewel } from './entities/jewel.entity';
-import { JewelTypeEnum } from 'src/enums/jewel-type.enum';
 import { UsersService } from 'src/users/users.service';
 import { jewel } from 'src/utils/consts/jewels';
 
@@ -36,21 +35,6 @@ export class JewelsService {
       await this.jewelRepository.save(newJewel);
 
       return newJewel;
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
-  async findByType(type: JewelTypeEnum) {
-    try {
-      const jewelAlready = await this.jewelRepository.findOne({
-        where: {
-          type,
-        },
-      });
-
-      return jewelAlready;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
