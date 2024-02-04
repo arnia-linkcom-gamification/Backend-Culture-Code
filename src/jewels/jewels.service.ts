@@ -10,6 +10,7 @@ import { CreateJewelDto } from './dto/create-jewel.dto';
 import { UpdateJewelDto } from './dto/update-jewel.dto';
 import { Jewel } from './entities/jewel.entity';
 import { UsersService } from 'src/users/users.service';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 import { jewel } from 'src/utils/consts/jewels';
 
 @Injectable()
@@ -65,12 +66,23 @@ export class JewelsService {
   async putJewel(idJewel: number, idUser: number) {
     try {
       const user = await this.userService.findOne(idUser);
+      if (!user) {
+        throw new NotFoundException('This user not exists');
+      }
 
       const jewel = await this.findOne(idJewel);
+      if (!jewel) {
+        throw new NotFoundException('This jewel not exists');
+      }
 
-      await this.userService.putJewel(idUser, jewel);
+      const userCreditUpdated: UpdateUserDto = {
+        credits: user.credits + 1,
+        password: user.password,
+        confirmPassword: user.password,
+      };
+      await this.userService.update(idUser, userCreditUpdated);
 
-      return user;
+      return await this.userService.putJewel(idUser, jewel);
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);

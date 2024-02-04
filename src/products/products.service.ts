@@ -6,16 +6,19 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateProductDto } from './dto/create-product.dto';
-//import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
+import { CreateProductDto } from './dto/create-product.dto';
+import { Product } from './entities/product.entity';
+import { UsersService } from 'src/users/users.service';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
+    private userService: UsersService,
   ) {}
 
   async create(createProductDto: CreateProductDto) {
@@ -113,16 +116,13 @@ export class ProductsService {
       const product = await this.productRepository.findOneOrFail({
         where: { id },
       });
-      if (!product) {
-        throw new NotFoundException('Product not found');
-      }
       return product;
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
   }
 
-  async update(id: number, updateProductDto) {
+  async update(id: number, updateProductDto: UpdateProductDto) {
     try {
       const { affected } = await this.productRepository.update(
         id,
@@ -143,13 +143,57 @@ export class ProductsService {
       if (!id) {
         throw new BadRequestException('Id should be informed');
       }
+
       const { affected } = await this.productRepository.delete(id);
       if (affected === 0) {
         throw new NotFoundException('User not found');
       }
+
       return {
         message: 'Request made successfully',
       };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async redeemProduct(idProduct: number, idUser: number) {
+    try {
+      const product = await this.productRepository.findOne({
+        where: { id: idProduct },
+      });
+
+      const user = await this.userService.findOne(idUser);
+
+      //const creditsUsed = user.credits - product.price;
+
+      if (user.credits >= product.price) {
+        for (let i = 0; i < product.price; i++) {
+          if (user.jewels.length === 0) {
+            throw new BadRequestException('Insufficient jewelry balance');
+          }
+          const userCreditUpdated: UpdateUserDto = {
+            credits: user.credits - 1,
+            password: user.password,
+            confirmPassword: user.password,
+          };
+          await this.userService.update(idUser, userCreditUpdated);
+
+          const jewelRemove = user.jewels[i].id;
+          await this.userService.removeJewel(idUser, jewelRemove);
+        }
+
+        const userUpdated = await this.userService.redeemProduct(
+          idUser,
+          product,
+        );
+        return userUpdated;
+      } else {
+        throw new BadRequestException(
+          'Insufficient balance to redeem the product',
+        );
+      }
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
