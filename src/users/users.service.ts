@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -24,9 +25,7 @@ export class UsersService {
         where: { email: payload.email },
       });
       if (emailExist) {
-        throw new BadRequestException(
-          'An user with this email already exists.',
-        );
+        throw new ConflictException('An user with this email already exists.');
       }
 
       const newUser = this.usersRepository.create(payload);

@@ -14,8 +14,11 @@ import { JewelsService } from './jewels.service';
 import { CreateJewelDto } from './dto/create-jewel.dto';
 import { UpdateJewelDto } from './dto/update-jewel.dto';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiConflictResponse,
+  ApiCreatedResponse,
   ApiParam,
   ApiResponse,
   ApiTags,
@@ -25,23 +28,31 @@ import { AuthGuard } from 'src/auth/guards/auth-guard';
 import { RoleEnum } from 'src/enums/role.enum';
 import { RolesGuard } from 'src/auth/guards/roles-guard';
 import { CreateJewelDoc } from './docs/create-jewel.doc';
-import { ResponseCreateJewelDoc } from './docs/response-create-jewel.doc';
+import {
+  ResponseCreateJewelAlredyExistlDoc,
+  ResponseCreateJewelBadRequestDoc,
+  ResponseCreateJewelDoc,
+} from './docs/response-create-jewel.doc';
 import { ResponseFindJewelById } from './docs/response-find-jewel-by-id.doc';
 import { ResponseUpdateJewelDoc } from './docs/response-update-jewel.doc';
 import { ResponsePutJewelDoc } from './docs/response-put-jewel.doc';
+
 @ApiTags('4 - Joias')
 @Controller('jewels')
 export class JewelsController {
   constructor(private readonly jewelsService: JewelsService) {}
+
   @Post()
   @ApiBody({ type: CreateJewelDoc })
-  @ApiResponse({ type: ResponseCreateJewelDoc, status: HttpStatus.CREATED })
+  @ApiCreatedResponse({ type: ResponseCreateJewelDoc })
+  @ApiBadRequestResponse({ type: ResponseCreateJewelBadRequestDoc })
+  @ApiConflictResponse({ type: ResponseCreateJewelAlredyExistlDoc })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createJewelDto: CreateJewelDto) {
-    return this.jewelsService.create(createJewelDto);
+  create(@Body() payload: CreateJewelDto) {
+    return this.jewelsService.create(payload);
   }
 
   @Get()
