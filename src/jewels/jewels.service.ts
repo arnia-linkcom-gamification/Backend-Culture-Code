@@ -48,12 +48,12 @@ export class JewelsService {
 
   async findOne(id: number) {
     try {
-      const jewel = await this.jewelRepository.findOneOrFail({
+      const jewel = await this.jewelRepository.findOne({
         where: { id },
       });
 
       if (!jewel) {
-        throw new NotFoundException('Jewel not found');
+        throw new NotFoundException(`Jewel with id:${id} not found`);
       }
 
       return jewel;

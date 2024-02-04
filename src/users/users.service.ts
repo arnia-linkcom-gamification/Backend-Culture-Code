@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ConflictException,
   HttpException,
-  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -63,10 +62,7 @@ export class UsersService {
         relations: ['jewels', 'products'],
       });
       if (!user) {
-        throw new HttpException(
-          `User with id:${id} not found.`,
-          HttpStatus.NOT_FOUND,
-        );
+        throw new NotFoundException(`User with id:${id} not found.`);
       }
 
       return user;

@@ -29,8 +29,7 @@ export class CreatedUserDoc {
   @ApiProperty({
     type: String,
     description: 'Refere-se a url da imagem do usuário.',
-    example:
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxkzc13zETkv5Wqey4puj3zZos40LpznJN6uCWOpx91r1L98RjOQTAwiD4Pm9DdA5KYqo&usqp=CAU',
+    example: null,
     required: false,
   })
   profileImg: string;

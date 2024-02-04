@@ -5,10 +5,10 @@ import {
   Body,
   Patch,
   Param,
-  // Delete,
   UseGuards,
   HttpStatus,
   HttpCode,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -16,6 +16,7 @@ import {
   ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiParam,
   ApiResponse,
@@ -37,6 +38,7 @@ import {
 import { ResponseFindJewelById } from './docs/response-find-jewel-by-id.doc';
 import { ResponseUpdateJewelDoc } from './docs/response-update-jewel.doc';
 import { ResponsePutJewelDoc } from './docs/response-put-jewel.doc';
+import { NotFoundJewel } from './docs/not-found-jewel.doc';
 
 @ApiTags('4 - Joias')
 @Controller('jewels')
@@ -52,42 +54,37 @@ export class JewelsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() payload: CreateJewelDto) {
-    return this.jewelsService.create(payload);
+  async create(@Body() payload: CreateJewelDto) {
+    return await this.jewelsService.create(payload);
   }
 
   @Get()
   @ApiOkResponse({ type: ResponseCreateJewelDoc, isArray: true })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  findAll() {
-    return this.jewelsService.findAll();
+  async findAll() {
+    return await this.jewelsService.findAll();
   }
 
   @Get(':id')
-  @ApiResponse({ type: ResponseFindJewelById })
-  @ApiParam({
-    type: Number,
-    name: 'id',
-  })
+  @ApiOkResponse({ type: ResponseFindJewelById })
+  @ApiNotFoundResponse({ type: NotFoundJewel })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: string) {
-    return this.jewelsService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return await this.jewelsService.findOne(id);
   }
 
   @Patch(':id')
   @ApiBearerAuth()
   @ApiResponse({ type: ResponseUpdateJewelDoc })
-  @ApiParam({
-    type: Number,
-    name: 'id',
-  })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
-  update(@Param('id') id: string, @Body() updateJewelDto: UpdateJewelDto) {
-    return this.jewelsService.update(+id, updateJewelDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateJewelDto: UpdateJewelDto,
+  ) {
+    return await this.jewelsService.update(+id, updateJewelDto);
   }
 
   @Post(':idJewel/user/:idUser')
@@ -104,13 +101,16 @@ export class JewelsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.OK)
-  putJewel(@Param('idJewel') idJewel: string, @Param('idUser') idUser: string) {
-    return this.jewelsService.putJewel(+idJewel, +idUser);
+  async putJewel(
+    @Param('idJewel') idJewel: string,
+    @Param('idUser') idUser: string,
+  ) {
+    return await this.jewelsService.putJewel(+idJewel, +idUser);
   }
 
   // @Delete(':id')
   // @HttpCode(HttpStatus.NO_CONTENT)
   // remove(@Param('id') id: string) {
-  //   return this.jewelsService.remove(+id);
+  //   return await this.jewelsService.remove(+id);
   // }
 }

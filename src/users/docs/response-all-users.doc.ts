@@ -10,7 +10,7 @@ export class ResponseAllUsersDoc extends ResponseCreateUserDoc {
   jewels: string;
 
   @ApiProperty({
-    type: String,
+    type: Array,
     description: 'Refere-se aos produtos do usuário.',
     example: [],
   })
