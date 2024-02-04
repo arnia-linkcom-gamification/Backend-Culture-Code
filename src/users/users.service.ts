@@ -3,13 +3,15 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Jewel } from 'src/jewels/entities/jewel.entity';
+import { Product } from 'src/products/entities/product.entity';
 
 @Injectable()
 export class UsersService {
@@ -106,14 +108,60 @@ export class UsersService {
     }
   }
 
+  async redeemProduct(id: number, product: Product) {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { id },
+        relations: ['jewels', 'products'],
+      });
+      user.products.push(product);
+      await this.usersRepository.save(Object.assign(user));
+      return user;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
   async putJewel(id: number, jewelPutted: Jewel) {
-    const user = await this.usersRepository.findOne({
-      where: { id },
-      relations: ['jewels'],
-    });
-    user.jewels.push(jewelPutted);
-    await this.usersRepository.save(Object.assign(user));
-    return user;
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { id },
+        relations: ['jewels'],
+      });
+
+      user.jewels.push(jewelPutted);
+
+      await this.usersRepository.save(Object.assign(user));
+      return user;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async removeJewel(id: number, jewelToRemoveId: number) {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { id },
+        relations: ['jewels'],
+      });
+
+      if (user) {
+        user.jewels = user.jewels.filter(
+          (jewel) => jewel.id !== jewelToRemoveId,
+        );
+
+        await this.usersRepository.save(user);
+
+        return user;
+      } else {
+        throw new NotFoundException('User not found');
+      }
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   async softDelete(id: number) {

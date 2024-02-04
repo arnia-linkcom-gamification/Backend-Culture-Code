@@ -35,6 +35,8 @@ import { Roles } from '../decorators/role.decorator';
 import { RoleEnum } from '../enums/role.enum';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ResponseUpdateProductDoc } from './docs/response-update-product.doc';
+import { ResponseRedeemProductDoc } from './docs/response-redeem-product.doc';
+
 @ApiTags('3 - Produtos')
 @Controller('products')
 export class ProductsController {
@@ -116,5 +118,27 @@ export class ProductsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.productsService.remove(+id);
+  }
+
+  @Post(':idProduct/user/:idUser')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiResponse({ type: ResponseRedeemProductDoc })
+  @ApiParam({
+    type: Number,
+    name: 'idProduct',
+    description:
+      'É o número do id do produto que o usuário selecionou para o resgate',
+  })
+  @ApiParam({
+    type: Number,
+    name: 'idUser',
+    description: 'É o número do id do usuário que está pedindo o resgate',
+  })
+  redeemProduct(
+    @Param('idProduct') idProduct: string,
+    @Param('idUser') idUser: string,
+  ) {
+    return this.productsService.redeemProduct(+idProduct, +idUser);
   }
 }
