@@ -7,12 +7,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './entities/product.entity';
-import { UsersService } from 'src/users/users.service';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 import { UsersService } from 'src/users/users.service';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
@@ -22,7 +18,6 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
-    private userService: UsersService,
     private userService: UsersService,
   ) {}
 
@@ -128,7 +123,6 @@ export class ProductsService {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
-  async update(id: number, updateProductDto: UpdateProductDto) {
     try {
       const { affected } = await this.productRepository.update(
         id,
@@ -150,12 +144,10 @@ export class ProductsService {
         throw new BadRequestException('Id should be informed');
       }
 
-
       const { affected } = await this.productRepository.delete(id);
       if (affected === 0) {
         throw new NotFoundException('User not found');
       }
-
 
       return {
         message: 'Request made successfully',
