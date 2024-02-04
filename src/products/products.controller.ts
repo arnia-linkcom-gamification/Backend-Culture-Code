@@ -23,8 +23,6 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CreatedProductDoc } from './docs/create-product.doc';
 import { ResponseCreateProductDoc } from './docs/response-create-product.doc';
-import { ResponsePaginationListProductDoc } from './docs/response-pagination-list-product.doc';
-import { PaginationListProductDoc } from './docs/pagination-list-product.doc';
 import { ResponseGetProductByFilterDoc } from './docs/response-get-product-by-filter.doc';
 import { GetProductByFilterDoc } from './docs/get-product-by-filter.doc';
 import { ResponseDeleteProductDoc } from './docs/response-delete-product.doc';
@@ -50,17 +48,6 @@ export class ProductsController {
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
-  }
-
-  @Get()
-  @ApiResponse({ type: ResponsePaginationListProductDoc })
-  @ApiQuery({ type: PaginationListProductDoc })
-  @HttpCode(HttpStatus.OK)
-  paginationListProduct(
-    @Query('page') page: number,
-    @Query('productsPerPage') productsPerPage: number,
-  ) {
-    return this.productsService.paginationListProduct(+page, +productsPerPage);
   }
 
   @Get('/filter')

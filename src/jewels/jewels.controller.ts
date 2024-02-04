@@ -101,16 +101,7 @@ export class JewelsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.OK)
-  async putJewel(
-    @Param('idJewel') idJewel: string,
-    @Param('idUser') idUser: string,
-  ) {
-    return await this.jewelsService.putJewel(+idJewel, +idUser);
+  putJewel(@Param('idJewel') idJewel: string, @Param('idUser') idUser: string) {
+    return this.jewelsService.putJewel(+idJewel, +idUser);
   }
-
-  // @Delete(':id')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // remove(@Param('id') id: string) {
-  //   return await this.jewelsService.remove(+id);
-  // }
 }

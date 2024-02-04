@@ -69,6 +69,9 @@ export class JewelsService {
       if (!user) {
         throw new NotFoundException('This user not exists');
       }
+      if (!user) {
+        throw new NotFoundException('This user not exists');
+      }
 
       const jewel = await this.findOne(idJewel);
       if (!jewel) {
@@ -105,9 +108,5 @@ export class JewelsService {
       console.log(error);
       throw new HttpException(error.message, error.status);
     }
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} jewel`;
   }
 }

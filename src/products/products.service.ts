@@ -166,8 +166,6 @@ export class ProductsService {
 
       const user = await this.userService.findOne(idUser);
 
-      //const creditsUsed = user.credits - product.price;
-
       if (user.credits >= product.price) {
         for (let i = 0; i < product.price; i++) {
           if (user.jewels.length === 0) {
