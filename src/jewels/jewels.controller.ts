@@ -18,8 +18,6 @@ import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiParam,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { JewelsService } from './jewels.service';
@@ -37,9 +35,10 @@ import {
 } from './docs/response-create-jewel.doc';
 import { ResponseFindJewelById } from './docs/response-find-jewel-by-id.doc';
 import { ResponseUpdateJewelDoc } from './docs/response-update-jewel.doc';
-import { ResponsePutJewelDoc } from './docs/response-put-jewel.doc';
+import { ResponseAssignJewelDoc } from './docs/response-assign-jewel.doc';
 import { NotFoundJewel } from './docs/not-found-jewel.doc';
 import { UpdateJewelDoc } from './docs/update-jewel.doc';
+import { NotFoundUser } from 'src/users/docs/not-found-user.doc';
 
 @ApiTags('4 - Joias')
 @Controller('jewels')
@@ -90,21 +89,17 @@ export class JewelsController {
     return await this.jewelsService.update(id, payload);
   }
 
-  @Post(':idJewel/user/:idUser')
-  @ApiResponse({ type: ResponsePutJewelDoc })
+  @Post(':jewelId/user/:userId')
+  @ApiCreatedResponse({ type: ResponseAssignJewelDoc })
+  @ApiNotFoundResponse({ type: NotFoundJewel })
+  @ApiNotFoundResponse({ type: NotFoundUser })
   @ApiBearerAuth()
-  @ApiParam({
-    type: Number,
-    name: 'idJewel',
-  })
-  @ApiParam({
-    type: Number,
-    name: 'idUser',
-  })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
-  @HttpCode(HttpStatus.OK)
-  putJewel(@Param('idJewel') idJewel: string, @Param('idUser') idUser: string) {
-    return this.jewelsService.putJewel(+idJewel, +idUser);
+  async assign(
+    @Param('jewelId', ParseIntPipe) jewelId: number,
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
+    return await this.jewelsService.assign(jewelId, userId);
   }
 }

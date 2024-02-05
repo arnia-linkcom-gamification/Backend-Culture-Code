@@ -9,16 +9,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateJewelDto } from './dto/create-jewel.dto';
 import { UpdateJewelDto } from './dto/update-jewel.dto';
 import { Jewel } from './entities/jewel.entity';
-import { UsersService } from 'src/users/users.service';
-import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 import { jewel } from 'src/utils/consts/jewels';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class JewelsService {
   constructor(
     @InjectRepository(Jewel)
-    private jewelRepository: Repository<Jewel>,
-    private userService: UsersService,
+    private readonly jewelRepository: Repository<Jewel>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(payload: CreateJewelDto) {
@@ -58,7 +58,7 @@ export class JewelsService {
       });
 
       if (!jewel) {
-        throw new NotFoundException(`Jewel with id:${id} not found`);
+        throw new NotFoundException(`Jewel with id:${id} not found.`);
       }
 
       return jewel;
@@ -81,29 +81,34 @@ export class JewelsService {
     }
   }
 
-  async putJewel(idJewel: number, idUser: number) {
+  async assign(jewelId: number, userId: number) {
     try {
-      const user = await this.userService.findOne(idUser);
-      if (!user) {
-        throw new NotFoundException('This user not exists');
-      }
-      if (!user) {
-        throw new NotFoundException('This user not exists');
-      }
-
-      const jewel = await this.findOne(idJewel);
+      const jewel = await this.findOne(jewelId);
       if (!jewel) {
-        throw new NotFoundException('This jewel not exists');
+        throw new NotFoundException(`Jewel with id:${jewelId} not found.`);
       }
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['jewels', 'products'],
+      });
+      if (!user) {
+        throw new NotFoundException(`User with id:${userId} not found.`);
+      }
+      user.credits++;
+      user.jewels.push(jewel);
+      // await this.userRepository.save(user);
 
-      const userCreditUpdated: UpdateUserDto = {
-        credits: user.credits + 1,
-        password: user.password,
-        confirmPassword: user.password,
-      };
-      await this.userService.update(idUser, userCreditUpdated);
+      await this.userRepository
+        .createQueryBuilder()
+        .relation(User, 'jewels')
+        .of(user)
+        .add(jewel);
 
-      return await this.userService.putJewel(idUser, jewel);
+      await this.userRepository.update(userId, {
+        credits: user.credits,
+      });
+
+      return user;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
