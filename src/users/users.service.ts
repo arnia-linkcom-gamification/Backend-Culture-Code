@@ -74,6 +74,7 @@ export class UsersService {
 
   async update(id: number, payload: UpdateUserDto) {
     try {
+      await this.findOne(id);
       if (payload.confirmPassword && !payload.password) {
         throw new BadRequestException("Passwords don't matches.");
       }

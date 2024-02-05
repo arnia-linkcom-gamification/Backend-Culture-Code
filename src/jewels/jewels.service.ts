@@ -43,7 +43,12 @@ export class JewelsService {
   }
 
   async findAll() {
-    return await this.jewelRepository.find();
+    try {
+      return await this.jewelRepository.find();
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   async findOne(id: number) {
@@ -57,6 +62,19 @@ export class JewelsService {
       }
 
       return jewel;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async update(id: number, payload: UpdateJewelDto) {
+    try {
+      await this.findOne(id);
+
+      await this.jewelRepository.update(id, payload);
+
+      return await this.findOne(id);
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
@@ -86,24 +104,6 @@ export class JewelsService {
       await this.userService.update(idUser, userCreditUpdated);
 
       return await this.userService.putJewel(idUser, jewel);
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
-  async update(id: number, updateJewelDto: UpdateJewelDto) {
-    try {
-      const { affected } = await this.jewelRepository.update(
-        id,
-        updateJewelDto,
-      );
-
-      if (affected === 0) {
-        throw new NotFoundException('Jewel not exist');
-      }
-
-      return await this.findOne(id);
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);

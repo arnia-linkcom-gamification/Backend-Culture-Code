@@ -39,6 +39,7 @@ import { ResponseFindJewelById } from './docs/response-find-jewel-by-id.doc';
 import { ResponseUpdateJewelDoc } from './docs/response-update-jewel.doc';
 import { ResponsePutJewelDoc } from './docs/response-put-jewel.doc';
 import { NotFoundJewel } from './docs/not-found-jewel.doc';
+import { UpdateJewelDoc } from './docs/update-jewel.doc';
 
 @ApiTags('4 - Joias')
 @Controller('jewels')
@@ -76,15 +77,17 @@ export class JewelsController {
   }
 
   @Patch(':id')
+  @ApiBody({ type: UpdateJewelDoc })
+  @ApiOkResponse({ type: ResponseUpdateJewelDoc })
+  @ApiNotFoundResponse({ type: NotFoundJewel })
   @ApiBearerAuth()
-  @ApiResponse({ type: ResponseUpdateJewelDoc })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   async update(
-    @Param('id') id: string,
-    @Body() updateJewelDto: UpdateJewelDto,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() payload: UpdateJewelDto,
   ) {
-    return await this.jewelsService.update(+id, updateJewelDto);
+    return await this.jewelsService.update(id, payload);
   }
 
   @Post(':idJewel/user/:idUser')

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { JewelTypeEnum } from 'src/enums/jewel-type.enum';
+import { jewel } from 'src/utils/consts/jewels';
 
 export class ResponseCreateJewelDoc {
   @ApiProperty({
@@ -12,7 +13,7 @@ export class ResponseCreateJewelDoc {
   @ApiProperty({
     type: String,
     description: 'Descrição sobre a joia cadastrada.',
-    example: 'A joia da alma permite acessar a essência de cada indivíduo, ...',
+    example: jewel['Joia da Alma'],
   })
   habilities: string;
 
