@@ -8,12 +8,16 @@ import {
   UseGuards,
   HttpStatus,
   HttpCode,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
-  ApiParam,
-  ApiResponse,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { JewelsService } from './jewels.service';
@@ -24,75 +28,78 @@ import { AuthGuard } from '../auth/guards/auth-guard';
 import { RoleEnum } from '../enums/role.enum';
 import { RolesGuard } from '../auth/guards/roles-guard';
 import { CreateJewelDoc } from './docs/create-jewel.doc';
-import { ResponseCreateJewelDoc } from './docs/response-create-jewel.doc';
+import {
+  ResponseCreateJewelAlredyExistlDoc,
+  ResponseCreateJewelBadRequestDoc,
+  ResponseCreateJewelDoc,
+} from './docs/response-create-jewel.doc';
 import { ResponseFindJewelById } from './docs/response-find-jewel-by-id.doc';
 import { ResponseUpdateJewelDoc } from './docs/response-update-jewel.doc';
-import { ResponsePutJewelDoc } from './docs/response-put-jewel.doc';
+import { ResponseAssignJewelDoc } from './docs/response-assign-jewel.doc';
+import { NotFoundJewel } from './docs/not-found-jewel.doc';
+import { UpdateJewelDoc } from './docs/update-jewel.doc';
+import { NotFoundUser } from 'src/users/docs/not-found-user.doc';
+
 @ApiTags('4 - Joias')
 @Controller('jewels')
 export class JewelsController {
   constructor(private readonly jewelsService: JewelsService) {}
+
   @Post()
   @ApiBody({ type: CreateJewelDoc })
-  @ApiResponse({ type: ResponseCreateJewelDoc, status: HttpStatus.CREATED })
+  @ApiCreatedResponse({ type: ResponseCreateJewelDoc })
+  @ApiBadRequestResponse({ type: ResponseCreateJewelBadRequestDoc })
+  @ApiConflictResponse({ type: ResponseCreateJewelAlredyExistlDoc })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createJewelDto: CreateJewelDto) {
-    return this.jewelsService.create(createJewelDto);
+  async create(@Body() payload: CreateJewelDto) {
+    return await this.jewelsService.create(payload);
   }
 
   @Get()
-  @ApiResponse({ type: ResponseCreateJewelDoc })
+  @ApiOkResponse({ type: ResponseCreateJewelDoc, isArray: true })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @HttpCode(HttpStatus.OK)
-  findAll() {
-    return this.jewelsService.findAll();
+  async findAll() {
+    return await this.jewelsService.findAll();
   }
 
   @Get(':id')
-  @ApiResponse({ type: ResponseFindJewelById })
-  @ApiParam({
-    type: Number,
-    name: 'id',
-  })
+  @ApiOkResponse({ type: ResponseFindJewelById })
+  @ApiNotFoundResponse({ type: NotFoundJewel })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: string) {
-    return this.jewelsService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return await this.jewelsService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiBody({ type: UpdateJewelDoc })
+  @ApiOkResponse({ type: ResponseUpdateJewelDoc })
+  @ApiNotFoundResponse({ type: NotFoundJewel })
   @ApiBearerAuth()
-  @ApiResponse({ type: ResponseUpdateJewelDoc })
-  @ApiParam({
-    type: Number,
-    name: 'id',
-  })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
-  update(@Param('id') id: string, @Body() updateJewelDto: UpdateJewelDto) {
-    return this.jewelsService.update(+id, updateJewelDto);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() payload: UpdateJewelDto,
+  ) {
+    return await this.jewelsService.update(id, payload);
   }
 
-  @Post(':idJewel/user/:idUser')
-  @ApiResponse({ type: ResponsePutJewelDoc })
+  @Post(':jewelId/user/:userId')
+  @ApiCreatedResponse({ type: ResponseAssignJewelDoc })
+  @ApiNotFoundResponse({ type: NotFoundJewel })
+  @ApiNotFoundResponse({ type: NotFoundUser })
   @ApiBearerAuth()
-  @ApiParam({
-    type: Number,
-    name: 'idJewel',
-  })
-  @ApiParam({
-    type: Number,
-    name: 'idUser',
-  })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
-  @HttpCode(HttpStatus.OK)
-  putJewel(@Param('idJewel') idJewel: string, @Param('idUser') idUser: string) {
-    return this.jewelsService.putJewel(+idJewel, +idUser);
+  async assign(
+    @Param('jewelId', ParseIntPipe) jewelId: number,
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
+    return await this.jewelsService.assign(jewelId, userId);
   }
 }

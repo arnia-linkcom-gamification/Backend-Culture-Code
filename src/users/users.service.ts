@@ -1,7 +1,7 @@
 import {
   BadRequestException,
+  ConflictException,
   HttpException,
-  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,7 +10,6 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { Jewel } from '../jewels/entities/jewel.entity';
 import { Product } from '../products/entities/product.entity';
 
 @Injectable()
@@ -26,9 +25,7 @@ export class UsersService {
         where: { email: payload.email },
       });
       if (emailExist) {
-        throw new BadRequestException(
-          'An user with this email already exists.',
-        );
+        throw new ConflictException('An user with this email already exists.');
       }
 
       const newUser = this.usersRepository.create(payload);
@@ -64,10 +61,7 @@ export class UsersService {
         relations: ['jewels', 'products'],
       });
       if (!user) {
-        throw new HttpException(
-          `User with id:${id} not found.`,
-          HttpStatus.NOT_FOUND,
-        );
+        throw new NotFoundException(`User with id:${id} not found.`);
       }
 
       return user;
@@ -79,6 +73,7 @@ export class UsersService {
 
   async update(id: number, payload: UpdateUserDto) {
     try {
+      await this.findOne(id);
       if (payload.confirmPassword && !payload.password) {
         throw new BadRequestException("Passwords don't matches.");
       }
@@ -115,23 +110,6 @@ export class UsersService {
         relations: ['jewels', 'products'],
       });
       user.products.push(product);
-      await this.usersRepository.save(Object.assign(user));
-      return user;
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
-  async putJewel(id: number, jewelPutted: Jewel) {
-    try {
-      const user = await this.usersRepository.findOne({
-        where: { id },
-        relations: ['jewels'],
-      });
-
-      user.jewels.push(jewelPutted);
-
       await this.usersRepository.save(Object.assign(user));
       return user;
     } catch (error) {

@@ -12,17 +12,23 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiConflictResponse,
+  ApiCreatedResponse,
   ApiNoContentResponse,
-  ApiParam,
-  ApiResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ResponseCreateUserDoc } from './docs/response-create-user.doc';
+import {
+  ResponseCreateUserDoc,
+  ResponseCreateUserEmailExistDoc,
+} from './docs/response-create-user.doc';
 import { CreatedUserDoc } from './docs/create-user.doc';
 import { Roles } from '../decorators/role.decorator';
 import { RoleEnum } from '../enums/role.enum';
@@ -32,6 +38,8 @@ import { UserId } from '../decorators/userId.decorator';
 import { ResponseAllUsersDoc } from './docs/response-all-users.doc';
 import { ResponseUpdateUserDoc } from './docs/response-update-user.doc';
 import { UpdateUserDoc } from './docs/update-user.docs';
+import { NotFoundUser } from './docs/not-found-user.doc';
+import { BadRequestUserId } from './docs/bad-request-user-id.doc';
 
 @ApiTags('2 - Usuários')
 @Controller('users')
@@ -40,16 +48,16 @@ export class UsersController {
 
   @Post()
   @ApiBody({ type: CreatedUserDoc })
-  @ApiResponse({ type: ResponseCreateUserDoc, status: HttpStatus.CREATED })
+  @ApiCreatedResponse({ type: ResponseCreateUserDoc })
+  @ApiConflictResponse({ type: ResponseCreateUserEmailExistDoc })
   async create(@Body() payload: CreateUserDto) {
     return await this.usersService.create(payload);
   }
 
   @Get()
-  @ApiResponse({
+  @ApiOkResponse({
     type: ResponseAllUsersDoc,
     isArray: true,
-    status: HttpStatus.OK,
   })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
@@ -59,7 +67,7 @@ export class UsersController {
   }
 
   @Get('me')
-  @ApiResponse({ type: ResponseAllUsersDoc, status: HttpStatus.OK })
+  @ApiOkResponse({ type: ResponseAllUsersDoc })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async me(@UserId() id: number) {
@@ -67,7 +75,9 @@ export class UsersController {
   }
 
   @Get(':id')
-  @ApiResponse({ type: ResponseAllUsersDoc, status: HttpStatus.OK })
+  @ApiOkResponse({ type: ResponseAllUsersDoc })
+  @ApiNotFoundResponse({ type: NotFoundUser })
+  @ApiBadRequestResponse({ type: BadRequestUserId })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
@@ -77,7 +87,7 @@ export class UsersController {
 
   @Patch('me')
   @ApiBody({ type: UpdateUserDoc })
-  @ApiResponse({ type: ResponseUpdateUserDoc, status: HttpStatus.OK })
+  @ApiOkResponse({ type: ResponseUpdateUserDoc })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async updateMe(@UserId() id: number, @Body() payload: UpdateUserDto) {
@@ -85,14 +95,10 @@ export class UsersController {
   }
 
   @Patch(':id')
-  @ApiParam({
-    name: 'id',
-    example: '2',
-    description: 'O id do usuário:',
-    required: true,
-  })
   @ApiBody({ type: UpdateUserDoc })
-  @ApiResponse({ type: ResponseUpdateUserDoc, status: HttpStatus.OK })
+  @ApiOkResponse({ type: ResponseUpdateUserDoc })
+  @ApiNotFoundResponse({ type: NotFoundUser })
+  @ApiBadRequestResponse({ type: BadRequestUserId })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
@@ -114,6 +120,7 @@ export class UsersController {
 
   @Delete(':id')
   @ApiNoContentResponse()
+  @ApiBadRequestResponse({ type: BadRequestUserId })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
@@ -124,6 +131,7 @@ export class UsersController {
 
   @Patch(':id/restore')
   @ApiNoContentResponse()
+  @ApiBadRequestResponse({ type: BadRequestUserId })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)

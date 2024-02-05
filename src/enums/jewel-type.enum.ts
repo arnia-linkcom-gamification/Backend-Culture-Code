@@ -1,8 +1,8 @@
 export enum JewelTypeEnum {
-  alma = 'Joia da Alma',
-  mente = 'Joia da Mente',
-  realidade = 'Joia da Realidade',
-  espaco = 'Joia do Espaço',
-  poder = 'Joia do Poder',
-  tempo = 'Joia do Tempo',
+  soul = 'Joia da Alma',
+  mind = 'Joia da Mente',
+  reality = 'Joia da Realidade',
+  space = 'Joia do Espaço',
+  power = 'Joia do Poder',
+  time = 'Joia do Tempo',
 }

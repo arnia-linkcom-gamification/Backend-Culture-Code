@@ -38,14 +38,6 @@ export class ResponseCreateUserDoc {
   role: RoleEnum;
 
   @ApiProperty({
-    type: String,
-    description: 'Caminho do arquivo.',
-    example:
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxkzc13zETkv5Wqey4puj3zZos40LpznJN6uCWOpx91r1L98RjOQTAwiD4Pm9DdA5KYqo&usqp=CAU',
-  })
-  profileImg: string;
-
-  @ApiProperty({
     type: Number,
     description: 'Quantidade de créditos.',
     example: 0,
@@ -72,4 +64,20 @@ export class ResponseCreateUserDoc {
     example: '2024-01-24T23:00:56.481Z',
   })
   updatedAt: Date;
+}
+
+export class ResponseCreateUserEmailExistDoc {
+  @ApiProperty({
+    type: String,
+    description: 'Status da requisição.',
+    example: 409,
+  })
+  statusCode: number;
+
+  @ApiProperty({
+    type: String,
+    description: 'Mensagem de email já cadastrado.',
+    example: 'An user with this email already exists.',
+  })
+  message: string;
 }

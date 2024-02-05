@@ -9,58 +9,29 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateJewelDto } from './dto/create-jewel.dto';
 import { UpdateJewelDto } from './dto/update-jewel.dto';
 import { Jewel } from './entities/jewel.entity';
-import { JewelTypeEnum } from '../enums/jewel-type.enum';
-import { UsersService } from '../users/users.service';
-import { UpdateUserDto } from '../users/dto/update-user.dto';
+import { jewel } from '../utils/consts/jewels';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class JewelsService {
   constructor(
     @InjectRepository(Jewel)
-    private jewelRepository: Repository<Jewel>,
-    private userService: UsersService,
+    private readonly jewelRepository: Repository<Jewel>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createJewelDto: CreateJewelDto) {
+  async create(payload: CreateJewelDto) {
     try {
-      const jewelAlready = await this.jewelRepository.exists({
-        where: { type: createJewelDto.type },
+      const jewelExist = await this.jewelRepository.exists({
+        where: { type: payload.type },
       });
-
-      if (jewelAlready) {
-        throw new ConflictException('This jewel already exists');
+      if (jewelExist) {
+        throw new ConflictException('This jewel already exists.');
       }
 
-      const newJewel = this.jewelRepository.create(createJewelDto);
-
-      switch (createJewelDto.type) {
-        case 'Joia da Alma':
-          newJewel.habilities =
-            'A joia da alma permite acessar a essência de cada indivíduo, seu portador tem o poder de analisar, compreender e lidar com os próprios sentimentos e dos outros.';
-          break;
-        case 'Joia da Mente':
-          newJewel.habilities =
-            'O poder dessa joia está na possibilidade de conseguir acessar diretamente os pensamentos de qualquer ser, transformando ideias em palavras, com assertividade na transmissão e receptividade das informações.';
-          break;
-        case 'Joia da Realidade':
-          newJewel.habilities =
-            'A joia da realidade traz consigo a incrível habilidade de adaptar a realidade de acordo com o aquilo que se espera, seu portador consegue tornar real a cultura da organização, se adaptando e comprometendo com as questões ética da empresa.';
-          break;
-        case 'Joia do Espaço':
-          newJewel.habilities =
-            'Esta joia traz consigo a capacidade de estar em diversos lugares ao mesmo tempo, estimula o interesse por mudanças, variedades de experiências e novas ideias.';
-          break;
-        case 'Joia do Poder':
-          newJewel.habilities =
-            'Esta poderosa joia trás consigo uma fonte infinita de energia para lidar com o próximo, aquele que a possui demonstra a capacidade de lidar com diversos perfis de pessoas, bem como proatividade e empatia.';
-          break;
-        case 'Joia do Tempo':
-          newJewel.habilities =
-            'Nesta joia está a possibilidade de total domínio sobre a dimensão temporal, aquele que a possui tem a capacidade de lidar com grande volume de demandas dentro dos prazos estabelecidos, mantendo atenção aos detalhes, tendo em vista o alcance de resultados.';
-          break;
-        default:
-          throw new NotFoundException('This jewel not exist');
-      }
+      const newJewel = this.jewelRepository.create(payload);
+      newJewel.habilities = jewel[payload.type];
 
       await this.jewelRepository.save(newJewel);
 
@@ -71,33 +42,23 @@ export class JewelsService {
     }
   }
 
-  async findByType(type: JewelTypeEnum) {
+  async findAll() {
     try {
-      const jewelAlready = await this.jewelRepository.findOne({
-        where: {
-          type,
-        },
-      });
-
-      return jewelAlready;
+      return await this.jewelRepository.find();
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
     }
   }
 
-  async findAll() {
-    return await this.jewelRepository.find();
-  }
-
   async findOne(id: number) {
     try {
-      const jewel = await this.jewelRepository.findOneOrFail({
+      const jewel = await this.jewelRepository.findOne({
         where: { id },
       });
 
       if (!jewel) {
-        throw new NotFoundException('Jewel not found');
+        throw new NotFoundException(`Jewel with id:${id} not found.`);
       }
 
       return jewel;
@@ -107,44 +68,47 @@ export class JewelsService {
     }
   }
 
-  async putJewel(idJewel: number, idUser: number) {
+  async update(id: number, payload: UpdateJewelDto) {
     try {
-      const user = await this.userService.findOne(idUser);
-      if (!user) {
-        throw new NotFoundException('This user not exists');
-      }
+      await this.findOne(id);
 
-      const jewel = await this.findOne(idJewel);
-      if (!jewel) {
-        throw new NotFoundException('This jewel not exists');
-      }
+      await this.jewelRepository.update(id, payload);
 
-      const userCreditUpdated: UpdateUserDto = {
-        credits: user.credits + 1,
-        password: user.password,
-        confirmPassword: user.password,
-      };
-      await this.userService.update(idUser, userCreditUpdated);
-
-      return await this.userService.putJewel(idUser, jewel);
+      return await this.findOne(id);
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
     }
   }
 
-  async update(id: number, updateJewelDto: UpdateJewelDto) {
+  async assign(jewelId: number, userId: number) {
     try {
-      const { affected } = await this.jewelRepository.update(
-        id,
-        updateJewelDto,
-      );
-
-      if (affected === 0) {
-        throw new NotFoundException('Jewel not exist');
+      const jewel = await this.findOne(jewelId);
+      if (!jewel) {
+        throw new NotFoundException(`Jewel with id:${jewelId} not found.`);
       }
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['jewels', 'products'],
+      });
+      if (!user) {
+        throw new NotFoundException(`User with id:${userId} not found.`);
+      }
+      user.credits++;
+      user.jewels.push(jewel);
+      // await this.userRepository.save(user);
 
-      return await this.findOne(id);
+      await this.userRepository
+        .createQueryBuilder()
+        .relation(User, 'jewels')
+        .of(user)
+        .add(jewel);
+
+      await this.userRepository.update(userId, {
+        credits: user.credits,
+      });
+
+      return user;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);

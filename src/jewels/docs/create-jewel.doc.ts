@@ -6,8 +6,8 @@ export class CreateJewelDoc {
     enum: JewelTypeEnum,
     description:
       'Refere-se ao nome da joia: Joia da Alma || Joia da Mente || Joia da Realidade || Joia do Espaço || Joia do Poder || Joia do Tempo',
-    example: JewelTypeEnum.alma,
+    example: JewelTypeEnum.soul,
     required: true,
   })
-  role: JewelTypeEnum;
+  type: JewelTypeEnum;
 }

@@ -1,17 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { JewelTypeEnum } from '../../enums/jewel-type.enum';
+import { jewel } from '../../utils/consts/jewels';
+
 export class ResponseCreateJewelDoc {
   @ApiProperty({
     enum: JewelTypeEnum,
     description: 'Refere-se ao nome da joia cadastrada.',
-    example: JewelTypeEnum.alma,
+    example: JewelTypeEnum.mind,
   })
   type: JewelTypeEnum;
 
   @ApiProperty({
     type: String,
     description: 'Descrição sobre a joia cadastrada.',
-    example: 'A joia da alma permite acessar a essência de cada indivíduo, ...',
+    example: jewel['Joia da Alma'],
   })
   habilities: string;
 
@@ -42,4 +44,44 @@ export class ResponseCreateJewelDoc {
     example: '2024-01-24T23:00:56.481Z',
   })
   updatedAt: Date;
+}
+
+export class ResponseCreateJewelBadRequestDoc {
+  @ApiProperty({
+    type: String,
+    description: 'Mensagem de joia inexistente.',
+    example:
+      'type must be one of the following values: Joia da Alma, Joia da Mente, Joia da Realidade, Joia do Espaço, Joia do Poder, Joia do Tempo',
+  })
+  message: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'Mensagem de erro.',
+    example: 'Bad Request',
+  })
+  error: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'Status da requisição.',
+    example: 400,
+  })
+  statusCode: number;
+}
+
+export class ResponseCreateJewelAlredyExistlDoc {
+  @ApiProperty({
+    type: String,
+    description: 'Status da requisição.',
+    example: 409,
+  })
+  statusCode: number;
+
+  @ApiProperty({
+    type: String,
+    description: 'Mensagem de joia inexistente.',
+    example: 'This jewel already exists.',
+  })
+  message: string;
 }
