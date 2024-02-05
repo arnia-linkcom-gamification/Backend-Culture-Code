@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { JewelTypeEnum } from 'src/enums/jewel-type.enum';
+import { JewelTypeEnum } from '../../enums/jewel-type.enum';
 export class ResponseCreateJewelDoc {
   @ApiProperty({
     enum: JewelTypeEnum,

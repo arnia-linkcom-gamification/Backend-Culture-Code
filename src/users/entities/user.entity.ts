@@ -12,9 +12,9 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { BadRequestException } from '@nestjs/common';
-import { RoleEnum } from 'src/enums/role.enum';
-import { Product } from 'src/products/entities/product.entity';
-import { Jewel } from 'src/jewels/entities/jewel.entity';
+import { RoleEnum } from '../../enums/role.enum';
+import { Product } from '../../products/entities/product.entity';
+import { Jewel } from '../../jewels/entities/jewel.entity';
 
 @Entity('users')
 export class User {

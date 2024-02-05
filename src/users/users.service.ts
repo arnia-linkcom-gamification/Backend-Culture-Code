@@ -10,8 +10,8 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { Jewel } from 'src/jewels/entities/jewel.entity';
-import { Product } from 'src/products/entities/product.entity';
+import { Jewel } from '../jewels/entities/jewel.entity';
+import { Product } from '../products/entities/product.entity';
 
 @Injectable()
 export class UsersService {

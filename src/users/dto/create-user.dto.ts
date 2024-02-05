@@ -10,8 +10,8 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { Match } from 'src/decorators/macth.decorator';
-import { RoleEnum } from 'src/enums/role.enum';
+import { Match } from '../../decorators/macth.decorator';
+import { RoleEnum } from '../../enums/role.enum';
 
 export class CreateUserDto {
   @IsString()

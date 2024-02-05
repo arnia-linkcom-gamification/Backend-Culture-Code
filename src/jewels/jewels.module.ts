@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JewelsService } from './jewels.service';
 import { JewelsController } from './jewels.controller';
 import { Jewel } from './entities/jewel.entity';
-import { UsersModule } from 'src/users/users.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Jewel]), UsersModule],

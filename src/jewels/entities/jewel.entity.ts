@@ -1,5 +1,5 @@
-import { JewelTypeEnum } from 'src/enums/jewel-type.enum';
-import { User } from 'src/users/entities/user.entity';
+import { JewelTypeEnum } from '../../enums/jewel-type.enum';
+import { User } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
