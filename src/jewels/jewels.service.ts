@@ -9,9 +9,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateJewelDto } from './dto/create-jewel.dto';
 import { UpdateJewelDto } from './dto/update-jewel.dto';
 import { Jewel } from './entities/jewel.entity';
-import { JewelTypeEnum } from 'src/enums/jewel-type.enum';
-import { UsersService } from 'src/users/users.service';
-import { UpdateUserDto } from 'src/users/dto/update-user.dto';
+import { JewelTypeEnum } from '../enums/jewel-type.enum';
+import { UsersService } from '../users/users.service';
+import { UpdateUserDto } from '../users/dto/update-user.dto';
 
 @Injectable()
 export class JewelsService {

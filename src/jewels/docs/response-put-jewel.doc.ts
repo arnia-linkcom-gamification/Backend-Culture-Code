@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CreatedUserDoc } from 'src/users/docs/create-user.doc';
+import { CreatedUserDoc } from '../../users/docs/create-user.doc';
 
 export class ResponsePutJewelDoc extends CreatedUserDoc {
   @ApiProperty({
