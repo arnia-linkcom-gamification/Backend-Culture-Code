@@ -9,7 +9,7 @@ import {
   MinLength,
   ValidateIf,
 } from 'class-validator';
-import { Match } from 'src/decorators/macth.decorator';
+import { Match } from '../../decorators/macth.decorator';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsString()

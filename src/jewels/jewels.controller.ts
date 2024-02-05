@@ -23,10 +23,10 @@ import {
 import { JewelsService } from './jewels.service';
 import { CreateJewelDto } from './dto/create-jewel.dto';
 import { UpdateJewelDto } from './dto/update-jewel.dto';
-import { Roles } from 'src/decorators/role.decorator';
-import { AuthGuard } from 'src/auth/guards/auth-guard';
-import { RoleEnum } from 'src/enums/role.enum';
-import { RolesGuard } from 'src/auth/guards/roles-guard';
+import { Roles } from '../decorators/role.decorator';
+import { AuthGuard } from '../auth/guards/auth-guard';
+import { RoleEnum } from '../enums/role.enum';
+import { RolesGuard } from '../auth/guards/roles-guard';
 import { CreateJewelDoc } from './docs/create-jewel.doc';
 import {
   ResponseCreateJewelAlredyExistlDoc,
