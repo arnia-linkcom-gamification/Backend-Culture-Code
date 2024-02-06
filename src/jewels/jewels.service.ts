@@ -96,19 +96,8 @@ export class JewelsService {
       }
       user.credits++;
       user.jewels.push(jewel);
-      // await this.userRepository.save(user);
 
-      await this.userRepository
-        .createQueryBuilder()
-        .relation(User, 'jewels')
-        .of(user)
-        .add(jewel);
-
-      await this.userRepository.update(userId, {
-        credits: user.credits,
-      });
-
-      return user;
+      return await this.userRepository.save(user);
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);

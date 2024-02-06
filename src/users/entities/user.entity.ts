@@ -67,8 +67,10 @@ export class User {
   @BeforeUpdate()
   async passwordHash() {
     try {
+      if (!this.password) {
+        return;
+      }
       this.password = await bcrypt.hash(this.password, 12);
-      console.log('Embaralhou a senha!');
     } catch (error) {
       console.log(error);
       throw new BadRequestException('Something went wrong with password hash.');
