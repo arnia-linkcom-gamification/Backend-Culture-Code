@@ -1,4 +1,4 @@
-import { JewelTypeEnum } from 'src/enums/jewel-type.enum';
+import { JewelTypeEnum } from '../../enums/jewel-type.enum';
 
 export const jewel = {
   [JewelTypeEnum.soul]:
