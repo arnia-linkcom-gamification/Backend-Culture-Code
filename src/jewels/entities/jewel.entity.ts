@@ -1,13 +1,13 @@
 import { JewelTypeEnum } from '../../enums/jewel-type.enum';
-import { User } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UsersJewels } from './users-jewels.entity';
 
 @Entity('jewels')
 export class Jewel {
@@ -23,10 +23,10 @@ export class Jewel {
   @Column({ type: 'varchar', length: 255, nullable: true })
   image: string;
 
-  @ManyToMany(() => User, (user) => user.jewels, {
+  @OneToMany(() => UsersJewels, (uj) => uj.jewel, {
     onDelete: 'CASCADE',
   })
-  users: User[];
+  users: UsersJewels[];
 
   @UpdateDateColumn()
   updatedAt: Date;
