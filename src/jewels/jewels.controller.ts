@@ -38,7 +38,7 @@ import { ResponseUpdateJewelDoc } from './docs/response-update-jewel.doc';
 import { ResponseAssignJewelDoc } from './docs/response-assign-jewel.doc';
 import { NotFoundJewel } from './docs/not-found-jewel.doc';
 import { UpdateJewelDoc } from './docs/update-jewel.doc';
-import { NotFoundUser } from 'src/users/docs/not-found-user.doc';
+import { NotFoundUser } from '../users/docs/not-found-user.doc';
 
 @ApiTags('4 - Joias')
 @Controller('jewels')

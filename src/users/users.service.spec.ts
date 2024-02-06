@@ -4,6 +4,7 @@ import { userRepositoryMock } from '../testing/users/user-repository.mock';
 import { listAllUsersMock } from '../testing/users/list-all-users.mock';
 import { createUserDtoMock } from '../testing/users/create-user-dto.mock';
 import { responseCreateUserMock } from '../testing/users/response-create-user.mock';
+import { updateUserDtoMock } from '../testing/users/update-user-dto.mock';
 
 describe('UsersService', () => {
   let userService: UsersService;
@@ -30,6 +31,13 @@ describe('UsersService', () => {
   describe('Get all users', () => {
     it('Should return a list of users', async () => {
       const result = await userService.findAll();
+      expect(result).toEqual(listAllUsersMock);
+    });
+  });
+
+  describe('Update User', () => {
+    it('Should return a list of users', async () => {
+      const result = await userService.update(1, updateUserDtoMock);
       expect(result).toEqual(listAllUsersMock);
     });
   });
