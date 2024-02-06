@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ResponseAllUsersDoc } from 'src/users/docs/response-all-users.doc';
+import { ResponseAllUsersDoc } from '../../users/docs/response-all-users.doc';
 
 export class ResponseAssignJewelDoc extends ResponseAllUsersDoc {
   @ApiProperty({

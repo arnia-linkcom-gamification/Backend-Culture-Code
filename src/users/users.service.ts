@@ -75,7 +75,7 @@ export class UsersService {
         relations: ['jewels.jewel', 'products'],
       });
       if (!user) {
-        throw new NotFoundException(`User with id:${id} not found.`);
+        throw new NotFoundException(`User not found.`);
       }
 
       const jewels = this.groupJewelsByType(user.jewels);
