@@ -178,8 +178,8 @@ export class ProductsService {
           };
           await this.userService.update(idUser, userCreditUpdated);
 
-          const jewelRemove = user.jewels[i].id;
-          await this.userService.removeJewel(idUser, jewelRemove);
+          // const jewelRemove = user.jewels[i].id;
+          // await this.userService.removeJewel(idUser, jewelRemove);
         }
 
         const userUpdated = await this.userService.redeemProduct(

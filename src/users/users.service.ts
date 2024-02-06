@@ -11,6 +11,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Product } from '../products/entities/product.entity';
+import { UsersJewels } from 'src/jewels/entities/users-jewels.entity';
 
 @Injectable()
 export class UsersService {
@@ -44,9 +45,22 @@ export class UsersService {
 
   async findAll() {
     try {
-      return await this.usersRepository.find({
-        relations: ['jewels', 'products'],
+      const users = await this.usersRepository.find({
+        relations: ['jewels.jewel', 'products'],
       });
+
+      const returnedUsers = users.map((user) => {
+        const jewels = this.groupJewelsByType(user.jewels);
+
+        const jewelsWithCount = Object.values(jewels);
+
+        return {
+          ...user,
+          jewels: jewelsWithCount,
+        };
+      });
+
+      return returnedUsers;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
@@ -58,13 +72,18 @@ export class UsersService {
       const user = await this.usersRepository.findOne({
         where: { id },
         withDeleted: true,
-        relations: ['jewels', 'products'],
+        relations: ['jewels.jewel', 'products'],
       });
       if (!user) {
         throw new NotFoundException(`User not found.`);
       }
 
-      return user;
+      const jewels = this.groupJewelsByType(user.jewels);
+      const jewelsWithCount = Object.values(jewels);
+
+      const userWithCountJewels = { ...user, jewels: jewelsWithCount };
+
+      return userWithCountJewels;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
@@ -158,5 +177,15 @@ export class UsersService {
       console.log(error);
       throw new HttpException(error.message, error.status);
     }
+  }
+
+  private groupJewelsByType(jewels: UsersJewels[]) {
+    return jewels.reduce((previous, current) => {
+      const jewel = current.jewel.type;
+      previous[jewel] = previous[jewel]
+        ? { ...previous[jewel], count: previous[jewel].count + 1 }
+        : { ...current.jewel, count: 1 };
+      return previous;
+    }, {});
   }
 }

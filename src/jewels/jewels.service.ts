@@ -11,6 +11,8 @@ import { UpdateJewelDto } from './dto/update-jewel.dto';
 import { Jewel } from './entities/jewel.entity';
 import { jewel } from '../utils/consts/jewels';
 import { User } from '../users/entities/user.entity';
+import { UsersJewels } from './entities/users-jewels.entity';
+import { UsersService } from './../users/users.service';
 
 @Injectable()
 export class JewelsService {
@@ -19,6 +21,9 @@ export class JewelsService {
     private readonly jewelRepository: Repository<Jewel>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(UsersJewels)
+    private readonly usersJewelsRepository: Repository<UsersJewels>,
+    private userService: UsersService,
   ) {}
 
   async create(payload: CreateJewelDto) {
@@ -87,28 +92,20 @@ export class JewelsService {
       if (!jewel) {
         throw new NotFoundException(`Jewel with id:${jewelId} not found.`);
       }
-      const user = await this.userRepository.findOne({
-        where: { id: userId },
-        relations: ['jewels', 'products'],
-      });
+      const user = await this.userService.findOne(userId);
       if (!user) {
         throw new NotFoundException(`User with id:${userId} not found.`);
       }
       user.credits++;
-      user.jewels.push(jewel);
-      // await this.userRepository.save(user);
 
-      await this.userRepository
-        .createQueryBuilder()
-        .relation(User, 'jewels')
-        .of(user)
-        .add(jewel);
-
-      await this.userRepository.update(userId, {
-        credits: user.credits,
+      await this.userRepository.update(userId, { credits: user.credits });
+      const usersJewels = this.usersJewelsRepository.create({
+        user: user,
+        jewel: jewel,
       });
+      await this.usersJewelsRepository.save(usersJewels);
 
-      return user;
+      return await this.userService.findOne(userId);
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
