@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-//import { NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { userRepositoryMock } from '../testing/users/user-repository.mock';
 import { listAllUsersMock } from '../testing/users/list-all-users.mock';
