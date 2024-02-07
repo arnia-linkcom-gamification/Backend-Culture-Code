@@ -7,6 +7,7 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -14,7 +15,7 @@ import * as bcrypt from 'bcrypt';
 import { BadRequestException } from '@nestjs/common';
 import { RoleEnum } from '../../enums/role.enum';
 import { Product } from '../../products/entities/product.entity';
-import { Jewel } from '../../jewels/entities/jewel.entity';
+import { UsersJewels } from 'src/jewels/entities/users-jewels.entity';
 
 @Entity('users')
 export class User {
@@ -42,11 +43,10 @@ export class User {
   @Column({ type: 'integer', default: 0 })
   credits: number;
 
-  @ManyToMany(() => Jewel, (jewel) => jewel.users, {
-    cascade: true,
+  @OneToMany(() => UsersJewels, (uj) => uj.user, {
+    onDelete: 'CASCADE',
   })
-  @JoinTable()
-  jewels: Jewel[];
+  jewels: UsersJewels[];
 
   @ManyToMany(() => Product, (product) => product.users, {
     cascade: true,
@@ -67,8 +67,10 @@ export class User {
   @BeforeUpdate()
   async passwordHash() {
     try {
+      if (!this.password) {
+        return;
+      }
       this.password = await bcrypt.hash(this.password, 12);
-      console.log('Embaralhou a senha!');
     } catch (error) {
       console.log(error);
       throw new BadRequestException('Something went wrong with password hash.');
