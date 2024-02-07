@@ -17,6 +17,8 @@ import {
   ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiParam,
   ApiResponse,
@@ -27,11 +29,10 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { CreatedProductDoc } from './docs/create-product.doc';
 import {
   ResponseCreateProductDoc,
+  ResponseNotFoundProductDoc,
   ResposeProductExist,
 } from './docs/response-create-product.doc';
 import { ResponseGetProductDoc } from './docs/response-get-product.doc';
-import { ResponseDeleteProductDoc } from './docs/response-delete-product.doc';
-import { ResponseFindByIdDoc } from './docs/response-find-by-id.doc';
 import { AuthGuard } from '../auth/guards/auth-guard';
 import { RolesGuard } from '../auth/guards/roles-guard';
 import { Roles } from '../decorators/role.decorator';
@@ -52,15 +53,15 @@ export class ProductsController {
   @ApiConflictResponse({ type: ResposeProductExist })
   @ApiBody({ type: CreatedProductDoc })
   @ApiBearerAuth()
-  async create(@Body() createProductDto: CreateProductDto) {
-    return await this.productsService.create(createProductDto);
+  async create(@Body() payload: CreateProductDto) {
+    return await this.productsService.create(payload);
   }
 
   @Get()
   @ApiOkResponse({ type: ResponseGetProductDoc })
   async findAll(
     @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
-    @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 5,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 10,
     @Query('price', new ParseIntPipe({ optional: true })) price?: number,
     @Query('name') name: string = '',
   ) {
@@ -69,44 +70,44 @@ export class ProductsController {
 
   @Get(':id')
   @UseGuards(AuthGuard)
-  @ApiResponse({ type: ResponseFindByIdDoc })
-  @ApiParam({
-    type: Number,
-    name: 'id',
-  })
-  @HttpCode(HttpStatus.OK)
-  async findOne(@Param('id') id: string) {
-    return await this.productsService.findOne(+id);
+  @ApiOkResponse({ type: ResponseCreateProductDoc })
+  @ApiNotFoundResponse({ type: ResponseNotFoundProductDoc })
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return await this.productsService.findOne(id);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
-  @ApiResponse({ type: ResponseUpdateProductDoc })
-  @ApiParam({
-    type: Number,
-    name: 'id',
-  })
-  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: ResponseUpdateProductDoc })
+  @ApiNotFoundResponse({ type: ResponseNotFoundProductDoc })
   async update(
-    @Param('id') id: string,
-    @Body() updateProductDto: UpdateProductDto,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() payload: UpdateProductDto,
   ) {
-    return await this.productsService.update(+id, updateProductDto);
+    return await this.productsService.update(id, payload);
   }
 
   @Delete(':id')
-  @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard, RolesGuard)
-  @ApiResponse({ type: ResponseDeleteProductDoc })
-  @ApiParam({
-    type: Number,
-    name: 'id',
-  })
+  @Roles(RoleEnum.admin)
   @ApiBearerAuth()
+  @ApiNoContentResponse()
+  @ApiNotFoundResponse({ type: ResponseNotFoundProductDoc })
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string) {
-    return await this.productsService.remove(+id);
+  async softDelete(@Param('id', ParseIntPipe) id: number) {
+    return await this.productsService.softDelete(id);
+  }
+
+  @Patch(':id/restore')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.admin)
+  @ApiBearerAuth()
+  @ApiNoContentResponse()
+  @ApiNotFoundResponse({ type: ResponseNotFoundProductDoc })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async restore(@Param('id', ParseIntPipe) id: number) {
+    return await this.productsService.restore(id);
   }
 
   @Post(':idProduct/user/:idUser')

@@ -7,6 +7,7 @@ export class ResponseCreateProductDoc {
     example: '5',
   })
   id: string;
+
   @ApiProperty({
     type: String,
     description: 'Refere-se ao nome do produto',
@@ -24,7 +25,7 @@ export class ResponseCreateProductDoc {
   @ApiProperty({
     type: Number,
     description: 'Incluir preço do produto no formato inteiro',
-    example: 3282,
+    example: 3,
   })
   price: number;
 
@@ -70,6 +71,22 @@ export class ResposeProductExist {
     type: String,
     description: 'Mensagem de produto já cadastrado.',
     example: 'This product already exists.',
+  })
+  message: string;
+}
+
+export class ResponseNotFoundProductDoc {
+  @ApiProperty({
+    type: Number,
+    description: 'Status da requisição.',
+    example: 404,
+  })
+  statusCode: number;
+
+  @ApiProperty({
+    type: String,
+    description: 'Mensagem de usuário não encontrado.',
+    example: 'Product with id:13 not found.',
   })
   message: string;
 }

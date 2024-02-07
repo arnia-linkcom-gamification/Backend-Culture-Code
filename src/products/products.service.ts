@@ -66,24 +66,26 @@ export class ProductsService {
 
   async findOne(id: number) {
     try {
-      const product = await this.productRepository.findOneOrFail({
+      const product = await this.productRepository.findOne({
         where: { id },
       });
+
+      if (!product) {
+        throw new NotFoundException(`Product with id:${id} not found.`);
+      }
+
       return product;
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto) {
+  async update(id: number, payload: UpdateProductDto) {
     try {
-      const { affected } = await this.productRepository.update(
-        id,
-        updateProductDto,
-      );
-      if (affected === 0) {
-        throw new NotFoundException('Product not found');
-      }
+      await this.findOne(id);
+
+      await this.productRepository.update(id, payload);
+
       return await this.findOne(id);
     } catch (error) {
       console.log(error);
@@ -91,20 +93,20 @@ export class ProductsService {
     }
   }
 
-  async remove(id: number) {
+  async softDelete(id: number) {
     try {
-      if (!id) {
-        throw new BadRequestException('Id should be informed');
-      }
+      await this.findOne(id);
+      return await this.productRepository.softDelete(id);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
+  }
 
-      const { affected } = await this.productRepository.delete(id);
-      if (affected === 0) {
-        throw new NotFoundException('User not found');
-      }
-
-      return {
-        message: 'Request made successfully',
-      };
+  async restore(id: number) {
+    try {
+      await this.findOne(id);
+      return await this.productRepository.restore(id);
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
