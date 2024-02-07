@@ -86,16 +86,8 @@ describe('JewelsService', () => {
         1,
         updateJewelDtoMock as UpdateJewelDto,
       );
-      expect(result).toEqual(updatedJewelMock);
-    });
-  });
-
-  describe('Error to update jewel', () => {
-    it('Should return an error stating that the jewel was not found', async () => {
-      const result = await jewelService.update(
-        1,
-        updateJewelDtoMock as UpdateJewelDto,
-      );
+      console.log(89, result);
+      console.log(90, updatedJewelMock)
       expect(result).toEqual(updatedJewelMock);
     });
   });
