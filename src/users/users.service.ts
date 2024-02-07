@@ -153,7 +153,7 @@ export class UsersService {
 
         return user;
       } else {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException(`User with id:${id} not found.`);
       }
     } catch (error) {
       console.log(error);
