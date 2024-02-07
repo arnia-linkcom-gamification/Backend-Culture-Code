@@ -9,7 +9,7 @@ export const jewelRepositoryMock = {
     create: jest.fn(),
     save: jest.fn(),
     find: jest.fn().mockResolvedValue(listAllJewelsMock),
-    findOne: jest.fn(),
+    findOne: jest.fn().mockResolvedValue(listAllJewelsMock[0]),
     update: jest.fn(),
     createQueryBuilder: jest.fn(),
   },
