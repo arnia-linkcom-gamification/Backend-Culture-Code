@@ -20,8 +20,6 @@ import {
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiParam,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
@@ -110,25 +108,15 @@ export class ProductsController {
     return await this.productsService.restore(id);
   }
 
-  @Post(':idProduct/user/:idUser')
+  @Post(':productId/user/:userId')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiResponse({ type: ResponseRedeemProductDoc })
-  @ApiParam({
-    type: Number,
-    name: 'idProduct',
-    description:
-      'É o número do id do produto que o usuário selecionou para o resgate',
-  })
-  @ApiParam({
-    type: Number,
-    name: 'idUser',
-    description: 'É o número do id do usuário que está pedindo o resgate',
-  })
+  @ApiOkResponse({ type: ResponseRedeemProductDoc })
+  @ApiNotFoundResponse({ type: ResponseNotFoundProductDoc })
   async redeemProduct(
-    @Param('idProduct') idProduct: string,
-    @Param('idUser') idUser: string,
+    @Param('productId', ParseIntPipe) productId: number,
+    @Param('userId', ParseIntPipe) userId: number,
   ) {
-    return await this.productsService.redeemProduct(+idProduct, +idUser);
+    return await this.productsService.redeemProduct(productId, userId);
   }
 }

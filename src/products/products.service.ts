@@ -11,13 +11,18 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './entities/product.entity';
 import { UsersService } from '../users/users.service';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { UpdateUserDto } from '../users/dto/update-user.dto';
+import { UsersJewels } from 'src/jewels/entities/users-jewels.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(UsersJewels)
+    private readonly usersJewelsRepository: Repository<UsersJewels>,
     private userService: UsersService,
   ) {}
 
@@ -113,40 +118,38 @@ export class ProductsService {
     }
   }
 
-  async redeemProduct(idProduct: number, idUser: number) {
+  async redeemProduct(productId: number, userId: number) {
     try {
       const product = await this.productRepository.findOne({
-        where: { id: idProduct },
+        where: { id: productId },
       });
 
-      const user = await this.userService.findOne(idUser);
-
-      if (user.credits >= product.price) {
-        for (let i = 0; i < product.price; i++) {
-          if (user.jewels.length === 0) {
-            throw new BadRequestException('Insufficient jewelry balance');
-          }
-          const userCreditUpdated: UpdateUserDto = {
-            credits: user.credits - 1,
-            password: user.password,
-            confirmPassword: user.password,
-          };
-          await this.userService.update(idUser, userCreditUpdated);
-
-          // const jewelRemove = user.jewels[i].id;
-          // await this.userService.removeJewel(idUser, jewelRemove);
-        }
-
-        const userUpdated = await this.userService.redeemProduct(
-          idUser,
-          product,
-        );
-        return userUpdated;
-      } else {
-        throw new BadRequestException(
-          'Insufficient balance to redeem the product',
-        );
+      if (!product) {
+        throw new NotFoundException(`Product with id:${productId} not found.`);
       }
+
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['jewels.jewel', 'products'],
+      });
+      if (!user) {
+        throw new NotFoundException(`User with id:${userId} not found.`);
+      }
+
+      if (product.price > user.credits) {
+        throw new BadRequestException(`Insufficient jewelry balance.`);
+      }
+
+      user.credits = user.credits - product.price;
+      user.products.push(product);
+      await this.userRepository.save(user);
+
+      for (let i = 0; i < product.price; i++) {
+        const jewelRemoved = user.jewels[i];
+        await this.usersJewelsRepository.remove(jewelRemoved);
+      }
+
+      return await this.userService.findOne(userId);
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
