@@ -7,6 +7,8 @@ import { userRepositoryMock } from '../testing/users/user-repository.mock';
 import { UsersService } from '../users/users.service';
 import { listAllJewelsMock } from '../testing/jewels/list-all-jewels.mock';
 import { HttpException } from '@nestjs/common';
+import { CreateJewelMock } from '../testing/jewels/create-jewel.mock';
+import { CreateJewelDto } from './dto/create-jewel.dto';
 
 describe('JewelsService', () => {
   let jewelService: JewelsService;
@@ -28,6 +30,26 @@ describe('JewelsService', () => {
 
   it('should be defined', () => {
     expect(jewelService).toBeDefined();
+  });
+
+  describe('Create jewels', () => {
+    it('Should return a list of users', async () => {
+      const result = await jewelService.create(
+        CreateJewelMock as unknown as CreateJewelDto,
+      );
+      expect(result).toEqual(listAllJewelsMock[0]);
+    });
+  });
+
+  describe('Error to create jewels', () => {
+    it('Should return an error stating that the jewel already exists', async () => {
+      jest
+        .spyOn(jewelRepositoryMock.useValue, 'exists')
+        .mockResolvedValueOnce(true);
+      await expect(
+        jewelService.create(CreateJewelMock as unknown as CreateJewelDto),
+      ).rejects.toThrow(HttpException);
+    });
   });
 
   describe('Get all jewels', () => {

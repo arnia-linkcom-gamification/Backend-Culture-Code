@@ -11,8 +11,8 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './entities/product.entity';
 import { UsersService } from '../users/users.service';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { UsersJewels } from 'src/jewels/entities/users-jewels.entity';
-import { User } from 'src/users/entities/user.entity';
+import { UsersJewels } from '../jewels/entities/users-jewels.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
