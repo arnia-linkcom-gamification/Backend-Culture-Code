@@ -4,6 +4,7 @@ import { usersServiceMock } from '../testing/users/users-service.mock';
 import { productsRepositoryMock } from '../testing/products/products-repository.mock';
 import { usersJewelsRepositoryMock } from '../testing/jewels/users-jewels-repository.mock';
 import { userRepositoryMock } from '../testing/users/user-repository.mock';
+//import { UsersService } from 'src/users/users.service';
 
 describe('ProductsService', () => {
   let service: ProductsService;
@@ -11,6 +12,7 @@ describe('ProductsService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        // UsersService,
         ProductsService,
         productsRepositoryMock,
         usersServiceMock,
