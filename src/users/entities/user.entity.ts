@@ -15,7 +15,7 @@ import * as bcrypt from 'bcrypt';
 import { BadRequestException } from '@nestjs/common';
 import { RoleEnum } from '../../enums/role.enum';
 import { Product } from '../../products/entities/product.entity';
-import { UsersJewels } from 'src/jewels/entities/users-jewels.entity';
+import { UsersJewels } from '../../jewels/entities/users-jewels.entity';
 
 @Entity('users')
 export class User {

@@ -11,7 +11,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Product } from '../products/entities/product.entity';
-import { UsersJewels } from 'src/jewels/entities/users-jewels.entity';
+import { UsersJewels } from '../jewels/entities/users-jewels.entity';
 
 @Injectable()
 export class UsersService {
