@@ -10,7 +10,6 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { Product } from '../products/entities/product.entity';
 import { UsersJewels } from '../jewels/entities/users-jewels.entity';
 
 @Injectable()
@@ -75,7 +74,7 @@ export class UsersService {
         relations: ['jewels.jewel', 'products'],
       });
       if (!user) {
-        throw new NotFoundException(`User not found.`);
+        throw new NotFoundException(`User with id:${id} not found.`);
       }
 
       const jewels = this.groupJewelsByType(user.jewels);
@@ -122,47 +121,9 @@ export class UsersService {
     }
   }
 
-  async redeemProduct(id: number, product: Product) {
-    try {
-      const user = await this.usersRepository.findOne({
-        where: { id },
-        relations: ['jewels', 'products'],
-      });
-      user.products.push(product);
-      await this.usersRepository.save(Object.assign(user));
-      return user;
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
-  async removeJewel(id: number, jewelToRemoveId: number) {
-    try {
-      const user = await this.usersRepository.findOne({
-        where: { id },
-        relations: ['jewels'],
-      });
-
-      if (user) {
-        user.jewels = user.jewels.filter(
-          (jewel) => jewel.id !== jewelToRemoveId,
-        );
-
-        await this.usersRepository.save(user);
-
-        return user;
-      } else {
-        throw new NotFoundException(`User with id:${id} not found.`);
-      }
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
   async softDelete(id: number) {
     try {
+      await this.findOne(id);
       return await this.usersRepository.softDelete(id);
     } catch (error) {
       console.log(error);
@@ -172,6 +133,7 @@ export class UsersService {
 
   async restore(id: number) {
     try {
+      await this.findOne(id);
       return await this.usersRepository.restore(id);
     } catch (error) {
       console.log(error);

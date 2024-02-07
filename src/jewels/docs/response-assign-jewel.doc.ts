@@ -15,6 +15,7 @@ export class ResponseAssignJewelDoc extends ResponseAllUsersDoc {
         id: 7,
         createAt: '2024-01-24T23:00:56.481Z',
         updatedAt: '2024-01-24T23:00:56.481Z',
+        count: 3,
       },
     ],
   })
