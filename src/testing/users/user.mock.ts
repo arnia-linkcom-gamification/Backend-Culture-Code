@@ -1,6 +1,4 @@
 import { RoleEnum } from '../../enums/role.enum';
-import { Jewel } from '../../jewels/entities/jewel.entity';
-import { Product } from '../../products/entities/product.entity';
 
 export const userMock = {
   id: 1,
@@ -8,9 +6,8 @@ export const userMock = {
   lastName: 'Silva',
   email: 'glasi@silva.com.br',
   profileImg: null,
-  password: 'Js@Nestjs2024',
-  jewels: [Jewel],
-  products: [Product],
+  jewels: [],
+  products: [],
   role: RoleEnum.admin,
   credits: 0,
   deleteAt: null,

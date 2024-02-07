@@ -4,11 +4,14 @@ import { UsersService } from './users.service';
 import { userRepositoryMock } from '../testing/users/user-repository.mock';
 import { listAllUsersMock } from '../testing/users/list-all-users.mock';
 import { createUserDtoMock } from '../testing/users/create-user-dto.mock';
-import { responseCreateUserMock } from '../testing/users/response-create-user.mock';
-import { updateUserDtoMock } from '../testing/users/update-user-dto.mock';
-import { findByIdUserMock } from '../testing/users/find-by-id-user.mock';
 import { HttpException } from '@nestjs/common';
-//import { NotFoundException } from '@nestjs/common';
+// import { updateUserMock } from '../testing/users/update-user-dto.mock';
+// import { updatedUserMock } from '../testing/users/updated-user.mock';
+// import { UpdateUserDto } from './dto/update-user.dto';
+import { userMock } from '../testing/users/user.mock';
+import { updateUserMock } from '../testing/users/update-user-dto.mock';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { updatedUserMock } from '../testing/users/updated-user.mock';
 
 describe('UsersService', () => {
   let userService: UsersService;
@@ -28,7 +31,7 @@ describe('UsersService', () => {
   describe('Create User', () => {
     it('Should creat and return user saved in the database', async () => {
       const result = await userService.create(createUserDtoMock);
-      expect(result).toEqual(responseCreateUserMock);
+      expect(result).toEqual(userMock);
     });
   });
 
@@ -42,7 +45,7 @@ describe('UsersService', () => {
   describe('Find User by Id', () => {
     it('Should return an user', async () => {
       const result = await userService.findOne(1);
-      expect(result).toEqual(findByIdUserMock);
+      expect(result).toEqual(listAllUsersMock[0]);
     });
   });
 
@@ -55,6 +58,16 @@ describe('UsersService', () => {
         );
 
       await expect(userService.findOne(1)).rejects.toThrow(HttpException);
+    });
+  });
+
+  describe('Update User', () => {
+    it('Should return updated user data', async () => {
+      const result = await userService.update(
+        1,
+        updateUserMock as UpdateUserDto,
+      );
+      expect(result).toEqual(updatedUserMock);
     });
   });
 });

@@ -6,7 +6,7 @@ describe('JewelsService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [JewelsService, jewelRepositoryMock],
+      providers: [JewelsService],
     }).compile();
 
     jewelService = module.get<JewelsService>(JewelsService);
