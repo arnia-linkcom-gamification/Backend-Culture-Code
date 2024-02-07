@@ -1,13 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-//import { NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { userRepositoryMock } from '../testing/users/user-repository.mock';
 import { listAllUsersMock } from '../testing/users/list-all-users.mock';
 import { createUserDtoMock } from '../testing/users/create-user-dto.mock';
 import { HttpException } from '@nestjs/common';
-// import { updateUserMock } from '../testing/users/update-user-dto.mock';
-// import { updatedUserMock } from '../testing/users/updated-user.mock';
-// import { UpdateUserDto } from './dto/update-user.dto';
 import { userMock } from '../testing/users/user.mock';
 import { updateUserMock } from '../testing/users/update-user-dto.mock';
 import { UpdateUserDto } from './dto/update-user.dto';
