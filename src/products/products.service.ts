@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './entities/product.entity';
 import { UsersService } from '../users/users.service';
@@ -21,13 +21,19 @@ export class ProductsService {
     private userService: UsersService,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(payload: CreateProductDto) {
     try {
-      const product = await this.findByName(createProductDto.name);
-      if (product) {
+      const productExist = await this.productRepository.findOne({
+        where: {
+          name: payload.name,
+        },
+      });
+      if (productExist) {
         throw new ConflictException('This product already exists');
       }
-      const newProduct = this.productRepository.create(createProductDto);
+
+      const newProduct = this.productRepository.create(payload);
+
       await this.productRepository.save(newProduct);
       return newProduct;
     } catch (error) {
@@ -36,77 +42,24 @@ export class ProductsService {
     }
   }
 
-  async findByName(name: string) {
+  async findAll(page: number, limit: number, price: number, name: string) {
     try {
-      const product = await this.productRepository.findOne({
-        where: {
-          name,
+      const products = await this.productRepository.find({
+        where: { price, name: ILike(`%${name}%`) },
+        skip: (page - 1) * limit,
+        take: limit,
+        order: {
+          createAt: 'DESC',
         },
       });
-      return product;
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error.message, error.status);
-    }
-  }
 
-  async paginationListProduct(page: number, productsPerPage: number) {
-    try {
-      if (!page || !productsPerPage) {
-        throw new BadRequestException('The request is incomplete');
-      }
-      const allProducts = (await this.productRepository.find()).length;
-      const products = await this.productRepository
-        .createQueryBuilder('product')
-        .skip((page - 1) * productsPerPage)
-        .take(productsPerPage)
-        .getMany();
-      const totalPages = Math.ceil(allProducts / productsPerPage);
-      const payload = {
-        products,
-        allProducts,
-        totalPages,
+      return {
+        currentPage: page,
+        pageSize: limit,
+        count: products.length,
+        data: products,
       };
-      return payload;
     } catch (error) {
-      console.log(error);
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
-  async getProductByFilter(
-    page: number,
-    productsPerPage: number,
-    price: number,
-    name: string,
-  ) {
-    try {
-      const queryBuilder = this.productRepository
-        .createQueryBuilder('product')
-        .skip((page - 1) * productsPerPage)
-        .take(productsPerPage);
-
-      if (price && name) {
-        queryBuilder.andWhere(
-          'product.price = :price AND product.name = :name',
-          { price, name },
-        );
-      } else if (price) {
-        queryBuilder.andWhere('product.price = :price', { price });
-      } else if (name) {
-        queryBuilder.andWhere('LOWER(TRIM(product.name)) LIKE :name', {
-          name: `%${name.toLowerCase()}%`,
-        });
-      }
-
-      const products = await queryBuilder.getMany();
-
-      if (products.length === 0) {
-        throw new NotFoundException('There is not product to this filter.');
-      }
-      return products;
-    } catch (error) {
-      console.log(error);
       throw new HttpException(error.message, error.status);
     }
   }

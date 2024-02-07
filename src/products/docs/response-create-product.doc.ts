@@ -57,3 +57,19 @@ export class ResponseCreateProductDoc {
   })
   deleteAt: Date;
 }
+
+export class ResposeProductExist {
+  @ApiProperty({
+    type: String,
+    description: 'Status da requisição.',
+    example: 409,
+  })
+  statusCode: number;
+
+  @ApiProperty({
+    type: String,
+    description: 'Mensagem de produto já cadastrado.',
+    example: 'This product already exists.',
+  })
+  message: string;
+}

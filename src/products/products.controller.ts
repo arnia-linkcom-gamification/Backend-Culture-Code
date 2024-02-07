@@ -10,21 +10,26 @@ import {
   Patch,
   HttpCode,
   HttpStatus,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiOkResponse,
   ApiParam,
-  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CreatedProductDoc } from './docs/create-product.doc';
-import { ResponseCreateProductDoc } from './docs/response-create-product.doc';
-import { ResponseGetProductByFilterDoc } from './docs/response-get-product-by-filter.doc';
-import { GetProductByFilterDoc } from './docs/get-product-by-filter.doc';
+import {
+  ResponseCreateProductDoc,
+  ResposeProductExist,
+} from './docs/response-create-product.doc';
+import { ResponseGetProductDoc } from './docs/response-get-product.doc';
 import { ResponseDeleteProductDoc } from './docs/response-delete-product.doc';
 import { ResponseFindByIdDoc } from './docs/response-find-by-id.doc';
 import { AuthGuard } from '../auth/guards/auth-guard';
@@ -39,33 +44,27 @@ import { ResponseRedeemProductDoc } from './docs/response-redeem-product.doc';
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
+
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
-  @ApiResponse({ type: ResponseCreateProductDoc })
+  @ApiCreatedResponse({ type: ResponseCreateProductDoc })
+  @ApiConflictResponse({ type: ResposeProductExist })
   @ApiBody({ type: CreatedProductDoc })
   @ApiBearerAuth()
-  @HttpCode(HttpStatus.CREATED)
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  async create(@Body() createProductDto: CreateProductDto) {
+    return await this.productsService.create(createProductDto);
   }
 
-  @Get('/filter')
-  @ApiResponse({ type: ResponseGetProductByFilterDoc })
-  @ApiQuery({ type: GetProductByFilterDoc })
-  @HttpCode(HttpStatus.OK)
-  getProductByFilter(
-    @Query('page') page: string,
-    @Query('productsPerPage') productsPerPage: string,
-    @Query('price') price: string,
-    @Query('name') name: string,
+  @Get()
+  @ApiOkResponse({ type: ResponseGetProductDoc })
+  async findAll(
+    @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 5,
+    @Query('price', new ParseIntPipe({ optional: true })) price?: number,
+    @Query('name') name: string = '',
   ) {
-    return this.productsService.getProductByFilter(
-      +page,
-      +productsPerPage,
-      +price,
-      name,
-    );
+    return await this.productsService.findAll(page, limit, price, name);
   }
 
   @Get(':id')
@@ -76,8 +75,8 @@ export class ProductsController {
     name: 'id',
   })
   @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.productsService.findOne(+id);
   }
 
   @Patch(':id')
@@ -89,8 +88,11 @@ export class ProductsController {
     name: 'id',
   })
   @HttpCode(HttpStatus.OK)
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.update(+id, updateProductDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
+    return await this.productsService.update(+id, updateProductDto);
   }
 
   @Delete(':id')
@@ -103,8 +105,8 @@ export class ProductsController {
   })
   @ApiBearerAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.productsService.remove(+id);
   }
 
   @Post(':idProduct/user/:idUser')
@@ -122,10 +124,10 @@ export class ProductsController {
     name: 'idUser',
     description: 'É o número do id do usuário que está pedindo o resgate',
   })
-  redeemProduct(
+  async redeemProduct(
     @Param('idProduct') idProduct: string,
     @Param('idUser') idUser: string,
   ) {
-    return this.productsService.redeemProduct(+idProduct, +idUser);
+    return await this.productsService.redeemProduct(+idProduct, +idUser);
   }
 }
