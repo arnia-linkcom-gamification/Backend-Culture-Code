@@ -11,6 +11,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UsersJewels } from '../jewels/entities/users-jewels.entity';
+import { Product } from 'src/products/entities/product.entity';
 
 @Injectable()
 export class UsersService {
@@ -75,6 +76,7 @@ export class UsersService {
       });
       if (!user) {
         throw new NotFoundException(`User with id:${id} not found.`);
+        throw new NotFoundException(`User with id:${id} not found.`);
       }
 
       const jewels = this.groupJewelsByType(user.jewels);
@@ -121,10 +123,56 @@ export class UsersService {
     }
   }
 
+  async redeemProduct(id: number, product: Product) {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { id },
+        relations: ['jewels', 'products'],
+      });
+      user.products.push(product);
+      await this.usersRepository.save(Object.assign(user));
+      return user;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async removeJewel(id: number, jewelToRemoveId: number) {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { id },
+        relations: ['jewels'],
+      });
+
+      if (user) {
+        user.jewels = user.jewels.filter(
+          (jewel) => jewel.id !== jewelToRemoveId,
+        );
+
+        await this.usersRepository.save(user);
+
+        return user;
+      } else {
+        throw new NotFoundException(`User with id:${id} not found.`);
+      }
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
   async softDelete(id: number) {
     try {
-      await this.findOne(id);
-      return await this.usersRepository.softDelete(id);
+      const user = await this.usersRepository.findOne({
+        where: { id },
+      });
+      if (!user) {
+        throw new NotFoundException(`User with id:${id} not found.`);
+      }
+      await this.usersRepository.softDelete(id);
+
+      return { message: 'Your request has been successfully fulfilled.' };
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);

@@ -67,4 +67,26 @@ describe('UsersService', () => {
       expect(result).toEqual(updatedUserMock);
     });
   });
+
+  describe('SoftDelete User', () => {
+    it('Should return updated user data', async () => {
+      const result = await userService.softDelete(1);
+      expect(result).toEqual({
+        message: 'Your request has been successfully fulfilled.',
+      });
+    });
+  });
+
+  describe('SoftDelete User', () => {
+    it('Should return an error stating that the user was not found', async () => {
+      jest
+        .spyOn(userRepositoryMock.useValue, 'findOne')
+        .mockRejectedValueOnce(
+          new HttpException('User with id:1 not found.', 404),
+        );
+      // const result = await userService.findOne(1);
+      // expect(result).rejects.toThrow(HttpException);
+      await expect(userService.findOne(1)).rejects.toThrow(HttpException);
+    });
+  });
 });
