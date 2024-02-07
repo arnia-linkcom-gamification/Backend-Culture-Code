@@ -10,8 +10,8 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { Product } from '../products/entities/product.entity';
 import { UsersJewels } from '../jewels/entities/users-jewels.entity';
+import { Product } from 'src/products/entities/product.entity';
 
 @Injectable()
 export class UsersService {
@@ -75,6 +75,7 @@ export class UsersService {
         relations: ['jewels.jewel', 'products'],
       });
       if (!user) {
+        throw new NotFoundException(`User with id:${id} not found.`);
         throw new NotFoundException(`User with id:${id} not found.`);
       }
 
@@ -179,6 +180,7 @@ export class UsersService {
 
   async restore(id: number) {
     try {
+      await this.findOne(id);
       return await this.usersRepository.restore(id);
     } catch (error) {
       console.log(error);
