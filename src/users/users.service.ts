@@ -75,7 +75,7 @@ export class UsersService {
         relations: ['jewels.jewel', 'products'],
       });
       if (!user) {
-        throw new NotFoundException(`User not found.`);
+        throw new NotFoundException(`User with id:${id} not found.`);
       }
 
       const jewels = this.groupJewelsByType(user.jewels);
@@ -163,6 +163,13 @@ export class UsersService {
 
   async softDelete(id: number) {
     try {
+      const user = await this.usersRepository.findOne({
+        where: { id },
+      });
+      if (!user) {
+        throw new NotFoundException(`User with id:${id} not found.`);
+      }
+
       return await this.usersRepository.softDelete(id);
     } catch (error) {
       console.log(error);
