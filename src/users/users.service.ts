@@ -170,8 +170,9 @@ export class UsersService {
       if (!user) {
         throw new NotFoundException(`User with id:${id} not found.`);
       }
+      await this.usersRepository.softDelete(id);
 
-      return await this.usersRepository.softDelete(id);
+      return { message: 'Your request has been successfully fulfilled.' };
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
