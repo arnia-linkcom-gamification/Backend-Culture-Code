@@ -47,7 +47,7 @@ export class ProductsService {
     }
   }
 
-  async findAll(page: number, limit: number, price: number, name: string) {
+  async findAll(page?: number, limit?: number, price?: number, name?: string) {
     try {
       const products = await this.productRepository.find({
         where: { price, name: ILike(`%${name}%`) },
@@ -100,8 +100,15 @@ export class ProductsService {
 
   async softDelete(id: number) {
     try {
-      await this.findOne(id);
-      return await this.productRepository.softDelete(id);
+      const user = await this.productRepository.findOne({
+        where: { id },
+      });
+      if (!user) {
+        throw new NotFoundException(`Product with id:${id} not found.`);
+      }
+      await this.productRepository.softDelete(id);
+
+      return { message: 'Your request has been successfully fulfilled.' };
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);

@@ -1,4 +1,5 @@
 import { RoleEnum } from '../../enums/role.enum';
+import { productMock } from '../products/product.mock';
 
 export const userMock = {
   id: 1,
@@ -7,9 +8,9 @@ export const userMock = {
   email: 'glasi@silva.com.br',
   profileImg: null,
   jewels: [],
-  products: [],
+  products: [productMock],
   role: RoleEnum.admin,
-  credits: 10,
+  credits: 9,
   deleteAt: null,
   createdAt: '2024-02-05T00:42:58.411Z',
   updatedAt: '2024-02-05T00:42:58.411Z',
