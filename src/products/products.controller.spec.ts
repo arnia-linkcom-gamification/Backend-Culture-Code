@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductsController } from './products.controller';
-import { ProductsService } from './products.service';
+import { AuthGuard } from '../auth/guards/auth-guard';
+import { authGuardMock } from '../testing/auth/auth-guard.mock';
+import { productsServiceMock } from '../testing/products/products-service.mock';
 
 describe('ProductsController', () => {
   let controller: ProductsController;
@@ -8,8 +10,11 @@ describe('ProductsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProductsController],
-      providers: [ProductsService],
-    }).compile();
+      providers: [productsServiceMock],
+    })
+      .overrideGuard(AuthGuard)
+      .useValue(authGuardMock)
+      .compile();
 
     controller = module.get<ProductsController>(ProductsController);
   });

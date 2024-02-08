@@ -86,8 +86,6 @@ describe('JewelsService', () => {
         1,
         updateJewelDtoMock as UpdateJewelDto,
       );
-      console.log(89, result);
-      console.log(90, updatedJewelMock)
       expect(result).toEqual(updatedJewelMock);
     });
   });

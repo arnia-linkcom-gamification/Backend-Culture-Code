@@ -52,8 +52,6 @@ describe('UsersService', () => {
         .mockRejectedValueOnce(
           new HttpException('User with id:1 not found.', 400),
         );
-      // const result = await userService.findOne(1);
-      // expect(result).rejects.toThrow(HttpException);
       await expect(userService.findOne(1)).rejects.toThrow(HttpException);
     });
   });

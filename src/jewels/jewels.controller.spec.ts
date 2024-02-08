@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JewelsController } from './jewels.controller';
-import { JewelsService } from './jewels.service';
+import { jewelsServiceMock } from '../testing/jewels/jewels-service.mock';
+import { AuthGuard } from '../auth/guards/auth-guard';
+import { authGuardMock } from '../testing/auth/auth-guard.mock';
 
 describe('JewelsController', () => {
   let controller: JewelsController;
@@ -8,8 +10,11 @@ describe('JewelsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [JewelsController],
-      providers: [JewelsService],
-    }).compile();
+      providers: [jewelsServiceMock],
+    })
+      .overrideGuard(AuthGuard)
+      .useValue(authGuardMock)
+      .compile();
 
     controller = module.get<JewelsController>(JewelsController);
   });
