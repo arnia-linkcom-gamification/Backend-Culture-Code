@@ -28,7 +28,7 @@ export class ProductsService {
 
   async create(payload: CreateProductDto) {
     try {
-      const productExist = await this.productRepository.findOne({
+      const productExist = await this.productRepository.exists({
         where: {
           name: payload.name,
         },
