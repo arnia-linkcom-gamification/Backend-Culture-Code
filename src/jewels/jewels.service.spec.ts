@@ -9,6 +9,9 @@ import { listAllJewelsMock } from '../testing/jewels/list-all-jewels.mock';
 import { HttpException } from '@nestjs/common';
 import { CreateJewelMock } from '../testing/jewels/create-jewel.mock';
 import { CreateJewelDto } from './dto/create-jewel.dto';
+import { updateJewelDtoMock } from '../testing/jewels/update-jewel-dto.mock';
+import { UpdateJewelDto } from './dto/update-jewel.dto';
+import { updatedJewelMock } from '../testing/jewels/updated-jewel.mock';
 
 describe('JewelsService', () => {
   let jewelService: JewelsService;
@@ -74,6 +77,18 @@ describe('JewelsService', () => {
           new HttpException('Jewel with id:1 not found.', 404),
         );
       await expect(jewelService.findOne(1)).rejects.toThrow(HttpException);
+    });
+  });
+
+  describe('Update jewel', () => {
+    it('Should return updated user data', async () => {
+      const result = await jewelService.update(
+        1,
+        updateJewelDtoMock as UpdateJewelDto,
+      );
+      console.log(89, result);
+      console.log(90, updatedJewelMock)
+      expect(result).toEqual(updatedJewelMock);
     });
   });
 });

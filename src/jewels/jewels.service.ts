@@ -65,7 +65,6 @@ export class JewelsService {
       if (!jewel) {
         throw new NotFoundException(`Jewel with id:${id} not found.`);
       }
-
       return jewel;
     } catch (error) {
       console.log(error);
