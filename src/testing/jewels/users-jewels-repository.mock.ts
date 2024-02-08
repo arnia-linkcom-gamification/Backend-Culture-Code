@@ -5,5 +5,6 @@ export const usersJewelsRepositoryMock = {
   useValue: {
     create: jest.fn(),
     save: jest.fn(),
+    remove: jest.fn(),
   },
 };

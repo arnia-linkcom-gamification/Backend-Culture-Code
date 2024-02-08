@@ -12,7 +12,7 @@ import { Jewel } from './entities/jewel.entity';
 import { jewel } from '../utils/consts/jewels';
 import { User } from '../users/entities/user.entity';
 import { UsersJewels } from './entities/users-jewels.entity';
-import { UsersService } from './../users/users.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class JewelsService {

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
+import { UsersService } from '../users/users.service';
 import { userRepositoryMock } from '../testing/users/user-repository.mock';
 import { listAllUsersMock } from '../testing/users/list-all-users.mock';
 import { createUserDtoMock } from '../testing/users/create-user-dto.mock';
@@ -31,7 +31,7 @@ describe('UsersService', () => {
     });
   });
 
-  describe('Get all users', () => {
+  describe('Find all users', () => {
     it('Should return a list of users', async () => {
       const result = await userService.findAll();
       expect(result).toEqual(listAllUsersMock);
@@ -82,8 +82,6 @@ describe('UsersService', () => {
         .mockRejectedValueOnce(
           new HttpException('User with id:1 not found.', 404),
         );
-      // const result = await userService.findOne(1);
-      // expect(result).rejects.toThrow(HttpException);
       await expect(userService.findOne(1)).rejects.toThrow(HttpException);
     });
   });
