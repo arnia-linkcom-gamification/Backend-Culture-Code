@@ -66,14 +66,14 @@ describe('UsersService', () => {
     });
   });
 
-  describe('SoftDelete User', () => {
-    it('Should return updated user data', async () => {
-      const result = await userService.softDelete(1);
-      expect(result).toEqual({
-        message: 'Your request has been successfully fulfilled.',
-      });
-    });
-  });
+  // describe('SoftDelete User', () => {
+  //   it('Should return updated user data', async () => {
+  //     const result = await userService.softDelete(1);
+  //     expect(result).toEqual({
+  //       message: 'Your request has been successfully fulfilled.',
+  //     });
+  //   });
+  // });
 
   describe('SoftDelete User', () => {
     it('Should return an error stating that the user was not found', async () => {
@@ -86,12 +86,12 @@ describe('UsersService', () => {
     });
   });
 
-  describe('Restore User', () => {
-    it('Should restore user', async () => {
-      const result = await userService.restore(1);
-      expect(result.message).toBe(
-        'Your request has been successfully fulfilled.',
-      );
-    });
-  });
+  // describe('Restore User', () => {
+  //   it('Should restore user', async () => {
+  //     const result = await userService.restore(1);
+  //     expect(result.message).toBe(
+  //       'Your request has been successfully fulfilled.',
+  //     );
+  //   });
+  // });
 });

@@ -11,7 +11,6 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { User } from '../users/entities/user.entity';
 import { UsersJewels } from '../jewels/entities/users-jewels.entity';
-import { Product } from '../products/entities/product.entity';
 
 @Injectable()
 export class UsersService {
@@ -125,7 +124,7 @@ export class UsersService {
   async softDelete(id: number) {
     try {
       await this.findOne(id);
-     return await this.usersRepository.softDelete(id);
+      return await this.usersRepository.softDelete(id);
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
