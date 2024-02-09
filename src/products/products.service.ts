@@ -100,8 +100,9 @@ export class ProductsService {
 
   async softDelete(id: number) {
     try {
-      await this.findOne(id)
-      return await this.productRepository.softDelete(id);
+      await this.findOne(id);
+      await this.productRepository.softDelete(id);
+      return;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
@@ -111,7 +112,8 @@ export class ProductsService {
   async restore(id: number) {
     try {
       await this.findOne(id);
-      return await this.productRepository.restore(id);
+      await this.productRepository.restore(id);
+      return;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
