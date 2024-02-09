@@ -10,7 +10,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { updateProductMock } from '../testing/products/update-product-mock';
 import { updatedProductMock } from '../testing/products/updated-product.mock';
 import { paginationProductsMock } from '../testing/products/pagination-products.mock';
-import { usersJewelsRepositoryMock } from '../testing/jewels/users-jewels-repository.mock';
+import { usersJewelsRepositoryMock } from '../testing/users/users-jewels-repository.mock';
 import { redeemProductsMock } from '../testing/products/redeem-product.mock';
 import { userMock } from '../testing/users/user.mock';
 import { usersJewelsMock } from '../testing/users/users-jewels.mock';

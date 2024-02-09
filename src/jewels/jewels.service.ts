@@ -91,10 +91,12 @@ export class JewelsService {
       if (!jewel) {
         throw new NotFoundException(`Jewel with id:${jewelId} not found.`);
       }
+      console.log(94, jewel);
       const user = await this.userService.findOne(userId);
       if (!user) {
         throw new NotFoundException(`User with id:${userId} not found.`);
       }
+      console.log(98, user);
       user.credits++;
 
       await this.userRepository.update(userId, { credits: user.credits });
@@ -102,6 +104,7 @@ export class JewelsService {
         user: user,
         jewel: jewel,
       });
+      console.log(105, usersJewels);
       await this.usersJewelsRepository.save(usersJewels);
 
       return await this.userService.findOne(userId);

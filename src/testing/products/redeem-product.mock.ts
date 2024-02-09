@@ -1,5 +1,4 @@
 import { RoleEnum } from '../../enums/role.enum';
-//import { listAllJewelsMock } from '../jewels/list-all-jewels.mock';
 import { productMock } from './product.mock';
 
 export const redeemProductsMock = {

@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JewelsService } from './jewels.service';
-import { jewelRepositoryMock } from '../testing/jewels/jewel-repository.mock';
-import { usersJewelsRepositoryMock } from '../testing/jewels/users-jewels-repository.mock';
+import { usersJewelsRepositoryMock } from '../testing/users/users-jewels-repository.mock';
 import { usersServiceMock } from '../testing/users/users-service.mock';
 import { userRepositoryMock } from '../testing/users/user-repository.mock';
-import { UsersService } from '../users/users.service';
-import { listAllJewelsMock } from '../testing/jewels/list-all-jewels.mock';
 import { HttpException } from '@nestjs/common';
-import { CreateJewelMock } from '../testing/jewels/create-jewel.mock';
 import { CreateJewelDto } from './dto/create-jewel.dto';
-import { updateJewelDtoMock } from '../testing/jewels/update-jewel-dto.mock';
 import { UpdateJewelDto } from './dto/update-jewel.dto';
+import { CreateJewelMock } from '../testing/jewels/create-jewel.mock';
+import { listAllJewelsMock } from '../testing/jewels/list-all-jewels.mock';
+import { updateJewelDtoMock } from '../testing/jewels/update-jewel-dto.mock';
 import { updatedJewelMock } from '../testing/jewels/updated-jewel.mock';
+import { jewelRepositoryMock } from '../testing/jewels/jewel-repository.mock';
+import { assignJewelUserMock } from '../testing/jewels/assing-jewel-user.mock';
 
 describe('JewelsService', () => {
   let jewelService: JewelsService;
@@ -20,7 +20,7 @@ describe('JewelsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         JewelsService,
-        UsersService,
+        //UsersService,
         jewelRepositoryMock,
         userRepositoryMock,
         usersJewelsRepositoryMock,
@@ -89,4 +89,11 @@ describe('JewelsService', () => {
       expect(result).toEqual(updatedJewelMock);
     });
   });
+
+  // describe('Assign jewel', () => {
+  //   it('ESCREVER O ATRIBUIR JOIA', async () => {
+  //     const result = await jewelService.assign(2, 1);
+  //     expect(result).toEqual(assignJewelUserMock);
+  //   });
+  // });
 });
