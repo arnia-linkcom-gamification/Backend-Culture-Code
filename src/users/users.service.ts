@@ -181,7 +181,9 @@ export class UsersService {
   async restore(id: number) {
     try {
       await this.findOne(id);
-      return await this.usersRepository.restore(id);
+      await this.usersRepository.restore(id);
+
+      return { message: 'Your request has been successfully fulfilled.' };
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);

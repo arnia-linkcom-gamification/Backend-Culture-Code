@@ -85,4 +85,13 @@ describe('UsersService', () => {
       await expect(userService.findOne(1)).rejects.toThrow(HttpException);
     });
   });
+
+  describe('Restore User', () => {
+    it('Should restore user', async () => {
+      const result = await userService.restore(1);
+      expect(result.message).toBe(
+        'Your request has been successfully fulfilled.',
+      );
+    });
+  });
 });
