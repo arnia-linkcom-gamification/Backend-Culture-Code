@@ -31,6 +31,14 @@ export class ResponseCreateUserDoc {
   email: string;
 
   @ApiProperty({
+    type: String,
+    description: 'Refere-se a url da imagem do usuário.',
+    example: null,
+    required: false,
+  })
+  profileImg: string;
+
+  @ApiProperty({
     enum: RoleEnum,
     description: 'Refere-se ao tipo de usuário.',
     example: RoleEnum.customer,
