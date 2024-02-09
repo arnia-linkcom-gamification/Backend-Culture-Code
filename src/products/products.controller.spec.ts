@@ -65,6 +65,22 @@ describe('ProductsController', () => {
     });
   });
 
+  describe('SoftDelete product', () => {
+    it('Should inactivate product and return status 204', async () => {
+      const result = await productController.softDelete(1);
+
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe('Restore product', () => {
+    it('Should restore product', async () => {
+      const result = await productController.restore(1);
+
+      expect(result).toBeUndefined();
+    });
+  });
+
   describe('Redeem product', () => {
     it('Should return user updated after redeem product', async () => {
       const result = await productController.redeemProduct(2, 1);
