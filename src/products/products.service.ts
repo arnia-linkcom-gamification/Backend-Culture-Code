@@ -28,7 +28,7 @@ export class ProductsService {
 
   async create(payload: CreateProductDto) {
     try {
-      const productExist = await this.productRepository.exists({
+      const productExist = await this.productRepository.findOne({
         where: {
           name: payload.name,
         },
@@ -100,15 +100,9 @@ export class ProductsService {
 
   async softDelete(id: number) {
     try {
-      const user = await this.productRepository.findOne({
-        where: { id },
-      });
-      if (!user) {
-        throw new NotFoundException(`Product with id:${id} not found.`);
-      }
+      await this.findOne(id);
       await this.productRepository.softDelete(id);
-
-      return { message: 'Your request has been successfully fulfilled.' };
+      return;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
@@ -118,7 +112,8 @@ export class ProductsService {
   async restore(id: number) {
     try {
       await this.findOne(id);
-      return await this.productRepository.restore(id);
+      await this.productRepository.restore(id);
+      return;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);

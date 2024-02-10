@@ -69,9 +69,7 @@ describe('UsersService', () => {
   describe('SoftDelete User', () => {
     it('Should return updated user data', async () => {
       const result = await userService.softDelete(1);
-      expect(result).toEqual({
-        message: 'Your request has been successfully fulfilled.',
-      });
+      expect(result).toBeUndefined();
     });
   });
 
@@ -83,6 +81,13 @@ describe('UsersService', () => {
           new HttpException('User with id:1 not found.', 404),
         );
       await expect(userService.findOne(1)).rejects.toThrow(HttpException);
+    });
+  });
+
+  describe('Restore User', () => {
+    it('Should restore user', async () => {
+      const result = await userService.restore(1);
+      expect(result).toBeUndefined();
     });
   });
 });

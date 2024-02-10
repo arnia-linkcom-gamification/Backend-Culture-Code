@@ -4,7 +4,6 @@ import { ProductsService } from './products.service';
 import { usersServiceMock } from '../testing/users/users-service.mock';
 import { productsRepositoryMock } from '../testing/products/products-repository.mock';
 import { userRepositoryMock } from '../testing/users/user-repository.mock';
-import { createProductMock } from '../testing/products/create-product.mock';
 import { productMock } from '../testing/products/product.mock';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { updateProductMock } from '../testing/products/update-product-mock';
@@ -14,6 +13,7 @@ import { usersJewelsRepositoryMock } from '../testing/users/users-jewels-reposit
 import { redeemProductsMock } from '../testing/products/redeem-product.mock';
 import { userMock } from '../testing/users/user.mock';
 import { usersJewelsMock } from '../testing/users/users-jewels.mock';
+import { createProductMock } from '../testing/products/create-product.mock';
 
 describe('ProductsService', () => {
   let productService: ProductsService;
@@ -38,6 +38,9 @@ describe('ProductsService', () => {
 
   describe('Create product', () => {
     it('Should save product in database', async () => {
+      jest
+        .spyOn(productsRepositoryMock.useValue, 'findOne')
+        .mockResolvedValueOnce(false);
       const result = await productService.create(createProductMock);
       expect(result).toEqual(productMock);
     });
@@ -99,9 +102,7 @@ describe('ProductsService', () => {
   describe('SoftDelete Product', () => {
     it('Should return updated product data', async () => {
       const result = await productService.softDelete(1);
-      expect(result).toEqual({
-        message: 'Your request has been successfully fulfilled.',
-      });
+      expect(result).toBeUndefined();
     });
   });
 
@@ -113,6 +114,13 @@ describe('ProductsService', () => {
           new HttpException('Product with id:1 not found.', 404),
         );
       await expect(productService.findOne(1)).rejects.toThrow(HttpException);
+    });
+  });
+
+  describe('Restore User', () => {
+    it('Should restore user', async () => {
+      const result = await productService.restore(1);
+      expect(result).toBeUndefined();
     });
   });
 

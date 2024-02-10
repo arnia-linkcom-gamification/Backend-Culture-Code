@@ -11,7 +11,6 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { User } from '../users/entities/user.entity';
 import { UsersJewels } from '../jewels/entities/users-jewels.entity';
-import { Product } from '../products/entities/product.entity';
 
 @Injectable()
 export class UsersService {
@@ -122,56 +121,11 @@ export class UsersService {
     }
   }
 
-  async redeemProduct(id: number, product: Product) {
-    try {
-      const user = await this.usersRepository.findOne({
-        where: { id },
-        relations: ['jewels', 'products'],
-      });
-      user.products.push(product);
-      await this.usersRepository.save(Object.assign(user));
-      return user;
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
-  async removeJewel(id: number, jewelToRemoveId: number) {
-    try {
-      const user = await this.usersRepository.findOne({
-        where: { id },
-        relations: ['jewels'],
-      });
-
-      if (user) {
-        user.jewels = user.jewels.filter(
-          (jewel) => jewel.id !== jewelToRemoveId,
-        );
-
-        await this.usersRepository.save(user);
-
-        return user;
-      } else {
-        throw new NotFoundException(`User with id:${id} not found.`);
-      }
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
   async softDelete(id: number) {
     try {
-      const user = await this.usersRepository.findOne({
-        where: { id },
-      });
-      if (!user) {
-        throw new NotFoundException(`User with id:${id} not found.`);
-      }
+      await this.findOne(id);
       await this.usersRepository.softDelete(id);
-
-      return { message: 'Your request has been successfully fulfilled.' };
+      return;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
@@ -181,7 +135,8 @@ export class UsersService {
   async restore(id: number) {
     try {
       await this.findOne(id);
-      return await this.usersRepository.restore(id);
+      await this.usersRepository.restore(id);
+      return;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
