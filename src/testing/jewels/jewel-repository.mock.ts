@@ -11,6 +11,5 @@ export const jewelRepositoryMock = {
     find: jest.fn().mockResolvedValue(listAllJewelsMock),
     findOne: jest.fn().mockResolvedValue(listAllJewelsMock[0]),
     update: jest.fn(),
-    createQueryBuilder: jest.fn(),
   },
 };
