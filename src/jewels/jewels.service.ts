@@ -39,7 +39,7 @@ export class JewelsService {
       newJewel.habilities = jewel[payload.type];
 
       await this.jewelRepository.save(newJewel);
-
+      console.log('service, 42' + newJewel.type, newJewel.habilities);
       return newJewel;
     } catch (error) {
       console.log(error);
@@ -91,7 +91,6 @@ export class JewelsService {
       if (!jewel) {
         throw new NotFoundException(`Jewel with id:${jewelId} not found.`);
       }
-      console.log(94, jewel);
       const user = await this.userService.findOne(userId);
       if (!user) {
         throw new NotFoundException(`User with id:${userId} not found.`);

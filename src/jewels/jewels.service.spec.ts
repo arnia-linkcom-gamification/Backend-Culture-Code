@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JewelsService } from './jewels.service';
-import { usersJewelsRepositoryMock } from '../testing/users/users-jewels-repository.mock';
+import { usersJewelsRepositoryMock } from '../testing/jewels/users-jewels-repository.mock';
 import { usersServiceMock } from '../testing/users/users-service.mock';
 import { userRepositoryMock } from '../testing/users/user-repository.mock';
 import { HttpException } from '@nestjs/common';
 import { CreateJewelDto } from './dto/create-jewel.dto';
 import { UpdateJewelDto } from './dto/update-jewel.dto';
-import { CreateJewelMock } from '../testing/jewels/create-jewel.mock';
+import { createJewelMock } from '../testing/jewels/create-jewel.mock';
 import { listAllJewelsMock } from '../testing/jewels/list-all-jewels.mock';
 import { updateJewelDtoMock } from '../testing/jewels/update-jewel-dto.mock';
 import { updatedJewelMock } from '../testing/jewels/updated-jewel.mock';
@@ -20,7 +20,6 @@ describe('JewelsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         JewelsService,
-        //UsersService,
         jewelRepositoryMock,
         userRepositoryMock,
         usersJewelsRepositoryMock,
@@ -38,7 +37,7 @@ describe('JewelsService', () => {
   describe('Create jewels', () => {
     it('Should return a list of users', async () => {
       const result = await jewelService.create(
-        CreateJewelMock as unknown as CreateJewelDto,
+        createJewelMock as unknown as CreateJewelDto,
       );
       expect(result).toEqual(listAllJewelsMock[0]);
     });
@@ -50,7 +49,7 @@ describe('JewelsService', () => {
         .spyOn(jewelRepositoryMock.useValue, 'exists')
         .mockResolvedValueOnce(true);
       await expect(
-        jewelService.create(CreateJewelMock as unknown as CreateJewelDto),
+        jewelService.create(createJewelMock as unknown as CreateJewelDto),
       ).rejects.toThrow(HttpException);
     });
   });
@@ -92,7 +91,7 @@ describe('JewelsService', () => {
 
   // describe('Assign jewel', () => {
   //   it('ESCREVER O ATRIBUIR JOIA', async () => {
-  //     const result = await jewelService.assign(2, 1);
+  //     const result = await jewelService.assign(1, 1);
   //     expect(result).toEqual(assignJewelUserMock);
   //   });
   // });

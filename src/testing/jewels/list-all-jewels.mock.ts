@@ -5,25 +5,25 @@ export const listAllJewelsMock = [
     id: '1',
     type: JewelTypeEnum.time,
     habilities:
-      'A joia da realidade traz consigo a incrível habilidade de adaptar a realidade de acordo com o aquilo que se espera, seu portador consegue tornar real a cultura da organização, se adaptando e comprometendo com as questões ética da empresa.',
+      'Nesta joia está a possibilidade de total domínio sobre a dimensão temporal, aquele que a possui tem a capacidade de lidar com grande volume de demandas dentro dos prazos estabelecidos, mantendo atenção aos detalhes, tendo em vista o alcance de resultados.',
     image: null,
     updatedAt: '2024-02-04T15:59:21.643Z',
     createdAt: '2024-02-04T15:59:21.643Z',
   },
   {
     id: '2',
-    type: JewelTypeEnum.soul,
+    type: JewelTypeEnum.time,
     habilities:
-      'A joia da realidade traz consigo a incrível habilidade de adaptar a realidade de acordo com o aquilo que se espera, seu portador consegue tornar real a cultura da organização, se adaptando e comprometendo com as questões ética da empresa.',
+      'Nesta joia está a possibilidade de total domínio sobre a dimensão temporal, aquele que a possui tem a capacidade de lidar com grande volume de demandas dentro dos prazos estabelecidos, mantendo atenção aos detalhes, tendo em vista o alcance de resultados.',
     image: null,
     updatedAt: '2024-02-04T15:59:21.643Z',
     createdAt: '2024-02-04T15:59:21.643Z',
   },
   {
     id: '3',
-    type: JewelTypeEnum.soul,
+    type: JewelTypeEnum.time,
     habilities:
-      'A joia da realidade traz consigo a incrível habilidade de adaptar a realidade de acordo com o aquilo que se espera, seu portador consegue tornar real a cultura da organização, se adaptando e comprometendo com as questões ética da empresa.',
+      'Nesta joia está a possibilidade de total domínio sobre a dimensão temporal, aquele que a possui tem a capacidade de lidar com grande volume de demandas dentro dos prazos estabelecidos, mantendo atenção aos detalhes, tendo em vista o alcance de resultados.',
     image: null,
     updatedAt: '2024-02-04T15:59:21.643Z',
     createdAt: '2024-02-04T15:59:21.643Z',

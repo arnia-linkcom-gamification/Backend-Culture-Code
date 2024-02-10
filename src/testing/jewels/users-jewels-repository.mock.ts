@@ -1,6 +1,6 @@
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UsersJewels } from '../../jewels/entities/users-jewels.entity';
-import { assignJewelUserMock } from '../jewels/assing-jewel-user.mock';
+import { assignJewelUserMock } from './assing-jewel-user.mock';
 
 export const usersJewelsRepositoryMock = {
   provide: getRepositoryToken(UsersJewels),
