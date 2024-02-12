@@ -6,6 +6,7 @@ import { usersServiceMock } from '../testing/users/users-service.mock';
 import { jwtServiceMock } from '../testing/auth/jwt-service.mock';
 import { tokenMock } from '../testing/auth/token.mock';
 import { userLoginCredentialsMock } from '../testing/auth/user-login-credentials.mock';
+import { HttpException } from '@nestjs/common';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -34,6 +35,16 @@ describe('AuthService', () => {
       const result = await service.login(userLoginCredentialsMock);
 
       expect(result).toEqual(tokenMock);
+    });
+  });
+
+  describe('Error in login', () => {
+    it('Should return an error message', async () => {
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(false as never);
+
+      await expect(service.login(userLoginCredentialsMock)).rejects.toThrow(
+        HttpException,
+      );
     });
   });
 });

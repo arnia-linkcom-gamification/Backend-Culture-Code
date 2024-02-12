@@ -35,28 +35,29 @@ describe('JewelsService', () => {
     expect(jewelService).toBeDefined();
   });
 
-  describe('Create jewels', () => {
-    it('Should return a list of users', async () => {
+  describe('Create jewel', () => {
+    it('Should return a list of jewels', async () => {
       const result = await jewelService.create(
         createJewelMock as unknown as CreateJewelDto,
       );
       expect(result).toEqual(listAllJewelsMock[0]);
     });
-  });
 
-  describe('Error to create jewels', () => {
-    it('Should return an error stating that the jewel already exists', async () => {
+    it('Should return an error message', async () => {
       jest
         .spyOn(jewelRepositoryMock.useValue, 'exists')
-        .mockResolvedValueOnce(true);
-      await expect(
-        jewelService.create(createJewelMock as unknown as CreateJewelDto),
-      ).rejects.toThrow(HttpException);
+        .mockRejectedValueOnce(
+          new HttpException('This jewel already exists.', 409),
+        );
+
+      await expect(jewelService.create(createJewelMock)).rejects.toThrow(
+        HttpException,
+      );
     });
   });
 
   describe('Get all jewels', () => {
-    it('Should return a list of users', async () => {
+    it('Should return a list of jewels', async () => {
       const result = await jewelService.findAll();
       expect(result).toEqual(listAllJewelsMock);
     });
@@ -65,28 +66,40 @@ describe('JewelsService', () => {
   describe('Find Jewel by Id', () => {
     it('Should return a jewel', async () => {
       const result = await jewelService.findOne(1);
+
       expect(result).toEqual(listAllJewelsMock[0]);
     });
-  });
 
-  describe('Not find Jewel by Id', () => {
     it('Should return an error stating that the jewel was not found', async () => {
       jest
         .spyOn(jewelRepositoryMock.useValue, 'findOne')
         .mockRejectedValueOnce(
           new HttpException('Jewel with id:1 not found.', 404),
         );
+
       await expect(jewelService.findOne(1)).rejects.toThrow(HttpException);
     });
   });
 
   describe('Update jewel', () => {
-    it('Should return updated user data', async () => {
+    it('Should return updated jewel data', async () => {
       const result = await jewelService.update(
         1,
         updateJewelDtoMock as UpdateJewelDto,
       );
       expect(result).toEqual(updatedJewelMock);
+    });
+
+    it('Should return an error stating that the jewel was not found', async () => {
+      jest
+        .spyOn(jewelRepositoryMock.useValue, 'findOne')
+        .mockRejectedValueOnce(
+          new HttpException('Jewel with id:1 not found.', 400),
+        );
+
+      await expect(
+        jewelService.update(1, updateJewelDtoMock as UpdateJewelDto),
+      ).rejects.toThrow(HttpException);
     });
   });
 
@@ -98,6 +111,16 @@ describe('JewelsService', () => {
 
       const result = await jewelService.assign(1, 1);
       expect(result).toEqual(updateUserAssignJewelMock);
+    });
+
+    it('Should return an error stating that the jewel was not found.', async () => {
+      jest
+        .spyOn(jewelRepositoryMock.useValue, 'findOne')
+        .mockRejectedValueOnce(
+          new HttpException('Jewel with id:1 not found.', 404),
+        );
+
+      await expect(jewelService.assign(1, 1)).rejects.toThrow(HttpException);
     });
   });
 });
