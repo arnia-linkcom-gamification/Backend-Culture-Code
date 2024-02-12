@@ -1,7 +1,7 @@
 import { RoleEnum } from '../../enums/role.enum';
 import { productMock } from '../products/product.mock';
 
-export const userMock = {
+export const removeCreditUserMock = {
   id: 1,
   firstName: 'Glasi',
   lastName: 'Silva',
