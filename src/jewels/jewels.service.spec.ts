@@ -11,7 +11,8 @@ import { listAllJewelsMock } from '../testing/jewels/list-all-jewels.mock';
 import { updateJewelDtoMock } from '../testing/jewels/update-jewel-dto.mock';
 import { updatedJewelMock } from '../testing/jewels/updated-jewel.mock';
 import { jewelRepositoryMock } from '../testing/jewels/jewel-repository.mock';
-import { assignJewelUserMock } from '../testing/jewels/assing-jewel-user.mock';
+import { updatedUserMock } from '../testing/users/updated-user.mock';
+import { updateUserAssignJewelMock } from '../testing/jewels/update-user-assing-jewel.mock';
 
 describe('JewelsService', () => {
   let jewelService: JewelsService;
@@ -89,10 +90,14 @@ describe('JewelsService', () => {
     });
   });
 
-  // describe('Assign jewel', () => {
-  //   it('ESCREVER O ATRIBUIR JOIA', async () => {
-  //     const result = await jewelService.assign(1, 1);
-  //     expect(result).toEqual(assignJewelUserMock);
-  //   });
-  // });
+  describe('Assign jewel', () => {
+    it('ESCREVER O ATRIBUIR JOIA', async () => {
+      jest
+        .spyOn(userRepositoryMock.useValue, 'update')
+        .mockResolvedValueOnce(updatedUserMock);
+
+      const result = await jewelService.assign(1, 1);
+      expect(result).toEqual(updateUserAssignJewelMock);
+    });
+  });
 });

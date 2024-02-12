@@ -7,6 +7,7 @@ import { listAllJewelsMock } from '../testing/jewels/list-all-jewels.mock';
 import { updateJewelDtoMock } from '../testing/jewels/update-jewel-dto.mock';
 import { UpdateJewelDto } from './dto/update-jewel.dto';
 import { updatedJewelMock } from '../testing/jewels/updated-jewel.mock';
+import { createJewelMock } from '../testing/jewels/create-jewel.mock';
 
 describe('JewelsController', () => {
   let jewelController: JewelsController;
@@ -25,6 +26,14 @@ describe('JewelsController', () => {
 
   it('should be defined', () => {
     expect(jewelController).toBeDefined();
+  });
+
+  describe('Create jewel', () => {
+    it('Should return the jewel created', async () => {
+      const result = await jewelController.create(createJewelMock);
+
+      expect(result).toEqual(listAllJewelsMock[0]);
+    });
   });
 
   describe('Find All', () => {
