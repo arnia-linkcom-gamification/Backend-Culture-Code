@@ -10,6 +10,8 @@ import {
   ParseIntPipe,
   HttpStatus,
   HttpCode,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -24,7 +26,7 @@ import {
 } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto, UploadImageDto } from './dto/update-user.dto';
 import {
   ResponseCreateUserDoc,
   ResponseCreateUserEmailExistDoc,
@@ -40,6 +42,7 @@ import { ResponseUpdateUserDoc } from './docs/response-update-user.doc';
 import { UpdateUserDoc } from './docs/update-user.docs';
 import { NotFoundUser } from './docs/not-found-user.doc';
 import { BadRequestUserId } from './docs/bad-request-user-id.doc';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('2 - Usuários')
 @Controller('users')
@@ -52,6 +55,12 @@ export class UsersController {
   @ApiConflictResponse({ type: ResponseCreateUserEmailExistDoc })
   async create(@Body() payload: CreateUserDto) {
     return await this.usersService.create(payload);
+  }
+
+  @Post('image')
+  @UseInterceptors(FileInterceptor('image'))
+  async upload(@UploadedFile() image: UploadImageDto) {
+    return await this.usersService.upload(image);
   }
 
   @Get()

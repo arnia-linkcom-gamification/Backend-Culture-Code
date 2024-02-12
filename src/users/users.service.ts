@@ -7,8 +7,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { createClient } from '@supabase/supabase-js';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto, UploadImageDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UsersJewels } from '../jewels/entities/users-jewels.entity';
 
@@ -36,6 +37,40 @@ export class UsersService {
       delete newUserWithoutPass.password;
 
       return newUserWithoutPass;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async upload(image: UploadImageDto) {
+    try {
+      // const configService = new ConfigService();
+      const supabase = createClient(
+        // configService.get<string>('SUPABASE_URL'),:
+        // configService.get<string>('SUPABASE_KEY'),
+        'https://hoptdcgqdfewpiilghky.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcHRkY2dxZGZld3BpaWxnaGt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc0NDMwMzEsImV4cCI6MjAyMzAxOTAzMX0.w8uNHAK5deNtVmW3wKZ7EnLrFZxJ8jMp3bG31-bPrNA',
+        {
+          auth: {
+            persistSession: false,
+          },
+        },
+      );
+
+      const data = await supabase.storage
+        .from('arnia')
+        // .from(configService.get<string>('SUPABASE_DB_NAME'))
+        .upload(image.originalname, image.buffer, {
+          upsert: true,
+        });
+
+      // const { data } = await supabase.storage
+      //   .from('arnia')
+      //   // .from(configService.get<string>('SUPABASE_DB_NAME'))
+      //   .getPublicUrl(image.filename);
+
+      return data;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
