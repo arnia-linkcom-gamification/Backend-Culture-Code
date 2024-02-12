@@ -91,7 +91,7 @@ describe('JewelsService', () => {
   });
 
   describe('Assign jewel', () => {
-    it('ESCREVER O ATRIBUIR JOIA', async () => {
+    it('Should return the user whith new jewel', async () => {
       jest
         .spyOn(userRepositoryMock.useValue, 'update')
         .mockResolvedValueOnce(updatedUserMock);

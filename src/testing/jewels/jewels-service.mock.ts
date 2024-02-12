@@ -1,4 +1,5 @@
 import { JewelsService } from '../../jewels/jewels.service';
+import { assignJewelUserMock } from './assing-jewel-user.mock';
 import { listAllJewelsMock } from './list-all-jewels.mock';
 import { updatedJewelMock } from './updated-jewel.mock';
 
@@ -9,6 +10,6 @@ export const jewelsServiceMock = {
     findAll: jest.fn().mockResolvedValueOnce(listAllJewelsMock),
     findOne: jest.fn().mockResolvedValueOnce(listAllJewelsMock[0]),
     update: jest.fn().mockResolvedValueOnce(updatedJewelMock),
-    assign: jest.fn(),
+    assign: jest.fn().mockResolvedValueOnce(assignJewelUserMock),
   },
 };
