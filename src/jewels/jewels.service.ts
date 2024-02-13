@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   HttpException,
   Injectable,
@@ -6,13 +7,15 @@ import {
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateJewelDto } from './dto/create-jewel.dto';
+import { CreateJewelDto, UploadImageDto } from './dto/create-jewel.dto';
 import { UpdateJewelDto } from './dto/update-jewel.dto';
 import { Jewel } from './entities/jewel.entity';
 import { jewel } from '../utils/consts/jewels';
 import { User } from '../users/entities/user.entity';
 import { UsersJewels } from './entities/users-jewels.entity';
 import { UsersService } from './../users/users.service';
+import { ConfigService } from '@nestjs/config';
+import { createClient } from '@supabase/supabase-js';
 
 @Injectable()
 export class JewelsService {
@@ -26,7 +29,7 @@ export class JewelsService {
     private userService: UsersService,
   ) {}
 
-  async create(payload: CreateJewelDto) {
+  async create(payload: CreateJewelDto, jewelImage: UploadImageDto) {
     try {
       const jewelExist = await this.jewelRepository.exists({
         where: { type: payload.type },
@@ -35,12 +38,50 @@ export class JewelsService {
         throw new ConflictException('This jewel already exists.');
       }
 
+      if (!jewelImage) {
+        throw new BadRequestException('jewelsImage should not be empty');
+      }
+
+      payload.image = await this.upload(jewelImage);
       const newJewel = this.jewelRepository.create(payload);
       newJewel.habilities = jewel[payload.type];
 
       await this.jewelRepository.save(newJewel);
 
       return newJewel;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async upload(file: UploadImageDto) {
+    try {
+      const configService = new ConfigService();
+      const supabaseBucket = configService.get<string>('SUPABASE_DB_NAME');
+      const supabase = createClient(
+        configService.get<string>('SUPABASE_URL'),
+        configService.get<string>('SUPABASE_KEY'),
+        {
+          auth: {
+            persistSession: false,
+          },
+        },
+      );
+
+      const imageData = await supabase.storage
+        .from(supabaseBucket)
+        .upload(file.originalname, file.buffer, {
+          upsert: true,
+        });
+
+      const image = await supabase.storage
+        .from(supabaseBucket)
+        .createSignedUrl(imageData.data.path, 365250);
+
+      const profileImg = image.data.signedUrl;
+
+      return profileImg;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
@@ -73,9 +114,18 @@ export class JewelsService {
     }
   }
 
-  async update(id: number, payload: UpdateJewelDto) {
+  async update(
+    id: number,
+    payload: UpdateJewelDto,
+    jewelImage?: UploadImageDto,
+  ) {
     try {
       await this.findOne(id);
+
+      payload.image = undefined;
+      payload.image = jewelImage
+        ? await this.upload(jewelImage)
+        : payload.image;
 
       await this.jewelRepository.update(id, payload);
 

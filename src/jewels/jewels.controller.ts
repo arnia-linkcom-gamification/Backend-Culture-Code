@@ -9,6 +9,8 @@ import {
   HttpStatus,
   HttpCode,
   ParseIntPipe,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -21,7 +23,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JewelsService } from './jewels.service';
-import { CreateJewelDto } from './dto/create-jewel.dto';
+import { CreateJewelDto, UploadImageDto } from './dto/create-jewel.dto';
 import { UpdateJewelDto } from './dto/update-jewel.dto';
 import { Roles } from '../decorators/role.decorator';
 import { AuthGuard } from '../auth/guards/auth-guard';
@@ -39,6 +41,7 @@ import { ResponseAssignJewelDoc } from './docs/response-assign-jewel.doc';
 import { NotFoundJewel } from './docs/not-found-jewel.doc';
 import { UpdateJewelDoc } from './docs/update-jewel.doc';
 import { NotFoundUser } from '../users/docs/not-found-user.doc';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('4 - Joias')
 @Controller('jewels')
@@ -54,8 +57,12 @@ export class JewelsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() payload: CreateJewelDto) {
-    return await this.jewelsService.create(payload);
+  @UseInterceptors(FileInterceptor('jewelImage'))
+  async create(
+    @Body() payload: CreateJewelDto,
+    @UploadedFile() jewelImage: UploadImageDto,
+  ) {
+    return await this.jewelsService.create(payload, jewelImage);
   }
 
   @Get()
@@ -82,11 +89,13 @@ export class JewelsController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
+  @UseInterceptors(FileInterceptor('jewelImage'))
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() payload: UpdateJewelDto,
+    @UploadedFile() jewelImage: UploadImageDto,
   ) {
-    return await this.jewelsService.update(id, payload);
+    return await this.jewelsService.update(id, payload, jewelImage);
   }
 
   @Post(':jewelId/user/:userId')

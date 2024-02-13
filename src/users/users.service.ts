@@ -127,7 +127,7 @@ export class UsersService {
     }
   }
 
-  async update(id: number, payload: UpdateUserDto, image: UploadImageDto) {
+  async update(id: number, payload: UpdateUserDto, image?: UploadImageDto) {
     try {
       await this.findOne(id);
       if (payload.confirmPassword && !payload.password) {
@@ -144,17 +144,16 @@ export class UsersService {
           );
         }
       }
+      payload.profileImg = undefined;
+      payload.profileImg = image
+        ? await this.upload(image)
+        : payload.profileImg;
 
       if (payload.password) {
         const user = await this.findOne(id);
         await this.usersRepository.save(Object.assign(user, payload));
         return await this.findOne(id);
       }
-
-      payload.profileImg = undefined;
-      payload.profileImg = image
-        ? await this.upload(image)
-        : payload.profileImg;
 
       await this.usersRepository.update(id, payload);
       return await this.findOne(id);
