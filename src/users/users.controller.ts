@@ -25,8 +25,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto, UploadImageDto } from './dto/update-user.dto';
+import { CreateUserDto, UploadImageDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import {
   ResponseCreateUserDoc,
   ResponseCreateUserEmailExistDoc,
@@ -53,14 +53,12 @@ export class UsersController {
   @ApiBody({ type: CreatedUserDoc })
   @ApiCreatedResponse({ type: ResponseCreateUserDoc })
   @ApiConflictResponse({ type: ResponseCreateUserEmailExistDoc })
-  async create(@Body() payload: CreateUserDto) {
-    return await this.usersService.create(payload);
-  }
-
-  @Post('image')
   @UseInterceptors(FileInterceptor('image'))
-  async upload(@UploadedFile() image: UploadImageDto) {
-    return await this.usersService.upload(image);
+  async create(
+    @Body() payload: CreateUserDto,
+    @UploadedFile() image?: UploadImageDto,
+  ) {
+    return await this.usersService.create(payload, image);
   }
 
   @Get()
@@ -99,8 +97,13 @@ export class UsersController {
   @ApiOkResponse({ type: ResponseUpdateUserDoc })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  async updateMe(@UserId() id: number, @Body() payload: UpdateUserDto) {
-    return this.usersService.update(id, payload);
+  @UseInterceptors(FileInterceptor('image'))
+  async updateMe(
+    @UserId() id: number,
+    @Body() payload: UpdateUserDto,
+    @UploadedFile() image?: UploadImageDto,
+  ) {
+    return this.usersService.update(id, payload, image);
   }
 
   @Patch(':id')
@@ -111,11 +114,13 @@ export class UsersController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
+  @UseInterceptors(FileInterceptor('image'))
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() payload: UpdateUserDto,
+    @UploadedFile() image?: UploadImageDto,
   ) {
-    return await this.usersService.update(id, payload);
+    return await this.usersService.update(id, payload, image);
   }
 
   @Delete('me')

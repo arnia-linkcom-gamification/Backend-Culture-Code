@@ -8,10 +8,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { createClient } from '@supabase/supabase-js';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto, UploadImageDto } from './dto/update-user.dto';
+import { CreateUserDto, UploadImageDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UsersJewels } from '../jewels/entities/users-jewels.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
@@ -20,7 +21,7 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async create(payload: CreateUserDto) {
+  async create(payload: CreateUserDto, image: UploadImageDto) {
     try {
       const emailExist = await this.usersRepository.exists({
         where: { email: payload.email },
@@ -28,6 +29,9 @@ export class UsersService {
       if (emailExist) {
         throw new ConflictException('An user with this email already exists.');
       }
+
+      payload.profileImg = undefined;
+      payload.profileImg = image ? await this.upload(image) : null;
 
       const newUser = this.usersRepository.create(payload);
 
@@ -43,14 +47,13 @@ export class UsersService {
     }
   }
 
-  async upload(image: UploadImageDto) {
+  async upload(file: UploadImageDto) {
     try {
-      // const configService = new ConfigService();
+      const configService = new ConfigService();
+      const supabaseBucket = configService.get<string>('SUPABASE_DB_NAME');
       const supabase = createClient(
-        // configService.get<string>('SUPABASE_URL'),:
-        // configService.get<string>('SUPABASE_KEY'),
-        'https://hoptdcgqdfewpiilghky.supabase.co',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcHRkY2dxZGZld3BpaWxnaGt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc0NDMwMzEsImV4cCI6MjAyMzAxOTAzMX0.w8uNHAK5deNtVmW3wKZ7EnLrFZxJ8jMp3bG31-bPrNA',
+        configService.get<string>('SUPABASE_URL'),
+        configService.get<string>('SUPABASE_KEY'),
         {
           auth: {
             persistSession: false,
@@ -58,19 +61,19 @@ export class UsersService {
         },
       );
 
-      const data = await supabase.storage
-        .from('arnia')
-        // .from(configService.get<string>('SUPABASE_DB_NAME'))
-        .upload(image.originalname, image.buffer, {
+      const imageData = await supabase.storage
+        .from(supabaseBucket)
+        .upload(file.originalname, file.buffer, {
           upsert: true,
         });
 
-      // const { data } = await supabase.storage
-      //   .from('arnia')
-      //   // .from(configService.get<string>('SUPABASE_DB_NAME'))
-      //   .getPublicUrl(image.filename);
+      const image = await supabase.storage
+        .from(supabaseBucket)
+        .createSignedUrl(imageData.data.path, 365250);
 
-      return data;
+      const profileImg = image.data.signedUrl;
+
+      return profileImg;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
@@ -124,7 +127,7 @@ export class UsersService {
     }
   }
 
-  async update(id: number, payload: UpdateUserDto) {
+  async update(id: number, payload: UpdateUserDto, image: UploadImageDto) {
     try {
       await this.findOne(id);
       if (payload.confirmPassword && !payload.password) {
@@ -147,6 +150,11 @@ export class UsersService {
         await this.usersRepository.save(Object.assign(user, payload));
         return await this.findOne(id);
       }
+
+      payload.profileImg = undefined;
+      payload.profileImg = image
+        ? await this.upload(image)
+        : payload.profileImg;
 
       await this.usersRepository.update(id, payload);
       return await this.findOne(id);
