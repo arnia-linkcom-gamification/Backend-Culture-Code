@@ -44,16 +44,17 @@ describe('ProductsService', () => {
       const result = await productService.create(createProductMock);
       expect(result).toEqual(productMock);
     });
-  });
 
-  describe('Error to create product', () => {
-    it('Should save product in database', async () => {
+    it('Should return an error message', async () => {
       jest
         .spyOn(productsRepositoryMock.useValue, 'findOne')
         .mockRejectedValueOnce(
-          new HttpException('An user with this email already exists.', 409),
+          new HttpException('This product already exists', 409),
         );
-      await expect(productService.findOne(1)).rejects.toThrow(HttpException);
+
+      await expect(productService.create(createProductMock)).rejects.toThrow(
+        HttpException,
+      );
     });
   });
 
@@ -72,55 +73,74 @@ describe('ProductsService', () => {
   });
 
   describe('Find Product by Id', () => {
-    it('Should return an user', async () => {
+    it('Should return a product', async () => {
       const result = await productService.findOne(1);
       expect(result).toEqual(productMock);
     });
-  });
 
-  describe('Not find User by Id', () => {
-    it('Should return an error stating that the user was not found', async () => {
-      jest
-        .spyOn(productsRepositoryMock.useValue, 'findOne')
-        .mockRejectedValueOnce(
-          new HttpException('Product with id:10 not found.', 404),
-        );
-      await expect(productService.findOne(1)).rejects.toThrow(HttpException);
+    describe('Not find User by Id', () => {
+      it('Should return an error stating that the product was not found', async () => {
+        jest
+          .spyOn(productsRepositoryMock.useValue, 'findOne')
+          .mockRejectedValueOnce(
+            new HttpException('Product with id:10 not found.', 404),
+          );
+        await expect(productService.findOne(1)).rejects.toThrow(HttpException);
+      });
     });
   });
 
   describe('Update Product', () => {
-    it('Should return updated user data', async () => {
+    it('Should return updated product data', async () => {
       const result = await productService.update(
         1,
         updateProductMock as UpdateProductDto,
       );
       expect(result).toEqual(updatedProductMock);
     });
-  });
 
-  describe('SoftDelete Product', () => {
-    it('Should return updated product data', async () => {
-      const result = await productService.softDelete(1);
-      expect(result).toBeUndefined();
+    it('Should return an error stating that the product was not found', async () => {
+      jest
+        .spyOn(productsRepositoryMock.useValue, 'findOne')
+        .mockRejectedValueOnce(
+          new HttpException('Product with id:1 not found.', 400),
+        );
+
+      await expect(
+        productService.update(1, updateProductMock as UpdateProductDto),
+      ).rejects.toThrow(HttpException);
     });
   });
 
   describe('SoftDelete Product', () => {
+    it('Should perform logical deletion of the product record', async () => {
+      const result = await productService.softDelete(1);
+      expect(result).toBeUndefined();
+    });
+
     it('Should return an error stating that the product was not found', async () => {
       jest
         .spyOn(productsRepositoryMock.useValue, 'findOne')
         .mockRejectedValueOnce(
           new HttpException('Product with id:1 not found.', 404),
         );
-      await expect(productService.findOne(1)).rejects.toThrow(HttpException);
+      await expect(productService.softDelete(1)).rejects.toThrow(HttpException);
     });
   });
 
-  describe('Restore User', () => {
-    it('Should restore user', async () => {
+  describe('Restore Product', () => {
+    it('Should restore product', async () => {
       const result = await productService.restore(1);
       expect(result).toBeUndefined();
+    });
+
+    it('Should return an error stating that the product was not found', async () => {
+      jest
+        .spyOn(productsRepositoryMock.useValue, 'findOne')
+        .mockRejectedValueOnce(
+          new HttpException('Product with id:1 not found.', 404),
+        );
+      await expect(productService.softDelete(1)).rejects.toThrow(HttpException);
     });
   });
 
@@ -144,6 +164,34 @@ describe('ProductsService', () => {
 
       const result = await productService.redeemProduct(2, 1);
       expect(result).toEqual(redeemProductsMock);
+    });
+
+    it('Should return an error stating that the product was not found.', async () => {
+      jest
+        .spyOn(productsRepositoryMock.useValue, 'findOne')
+        .mockRejectedValueOnce(
+          new HttpException('Product with id:1 not found.', 404),
+        );
+
+      await expect(productService.redeemProduct(2, 1)).rejects.toThrow(
+        HttpException,
+      );
+    });
+
+    it('Should return an error stating that the user was not found.', async () => {
+      jest
+        .spyOn(productsRepositoryMock.useValue, 'findOne')
+        .mockResolvedValueOnce(productMock);
+
+      jest
+        .spyOn(userRepositoryMock.useValue, 'findOne')
+        .mockRejectedValueOnce(
+          new HttpException('User with id:1 not found.', 404),
+        );
+
+      await expect(productService.redeemProduct(2, 1)).rejects.toThrow(
+        HttpException,
+      );
     });
   });
 });
