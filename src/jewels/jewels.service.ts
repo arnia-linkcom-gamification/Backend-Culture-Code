@@ -69,9 +69,15 @@ export class JewelsService {
         },
       );
 
+      const name = file.originalname.split('.')[0];
+      const extension = file.originalname.split('.')[1];
+      const sanitizedName = name.replace(/[^a-z0-9]/gi, '-');
+      const newFileName =
+        sanitizedName.split(' ').join('_') + '_' + Date.now() + '.' + extension;
+
       const imageData = await supabase.storage
         .from(supabaseBucket)
-        .upload(file.originalname, file.buffer, {
+        .upload(newFileName, file.buffer, {
           upsert: true,
         });
 
