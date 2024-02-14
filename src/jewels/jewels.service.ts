@@ -83,7 +83,7 @@ export class JewelsService {
 
       const image = await supabase.storage
         .from(supabaseBucket)
-        .createSignedUrl(imageData.data.path, 365250);
+        .createSignedUrl(imageData.data.path, 365);
 
       const profileImg = image.data.signedUrl;
 
