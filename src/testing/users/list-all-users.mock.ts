@@ -10,7 +10,7 @@ export const listAllUsersMock = [
     jewels: [],
     products: [],
     role: RoleEnum.admin,
-    credits: 0,
+    credits: 10,
     deleteAt: null,
     createdAt: '2024-02-05T00:42:58.411Z',
     updatedAt: '2024-02-05T00:42:58.411Z',

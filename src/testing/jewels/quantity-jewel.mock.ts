@@ -1,12 +1,13 @@
-import { RoleEnum } from '../../enums/role.enum';
+import { RoleEnum } from 'src/enums/role.enum';
+import { listAllJewelsMock } from './list-all-jewels.mock';
 
-export const userMock = {
+export const quantityJewelMock = {
   id: 1,
   firstName: 'Glasi',
   lastName: 'Silva',
   email: 'glasi@silva.com.br',
   profileImg: null,
-  jewels: [],
+  jewels: [listAllJewelsMock[0]],
   products: [],
   role: RoleEnum.admin,
   credits: 10,

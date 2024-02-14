@@ -13,7 +13,7 @@ import { Jewel } from './entities/jewel.entity';
 import { jewel } from '../utils/consts/jewels';
 import { User } from '../users/entities/user.entity';
 import { UsersJewels } from './entities/users-jewels.entity';
-import { UsersService } from './../users/users.service';
+import { UsersService } from '../users/users.service';
 import { ConfigService } from '@nestjs/config';
 import { createClient } from '@supabase/supabase-js';
 
@@ -112,7 +112,6 @@ export class JewelsService {
       if (!jewel) {
         throw new NotFoundException(`Jewel with id:${id} not found.`);
       }
-
       return jewel;
     } catch (error) {
       console.log(error);
@@ -148,10 +147,12 @@ export class JewelsService {
       if (!jewel) {
         throw new NotFoundException(`Jewel with id:${jewelId} not found.`);
       }
+
       const user = await this.userService.findOne(userId);
       if (!user) {
         throw new NotFoundException(`User with id:${userId} not found.`);
       }
+
       user.credits++;
 
       await this.userRepository.update(userId, { credits: user.credits });
@@ -159,6 +160,7 @@ export class JewelsService {
         user: user,
         jewel: jewel,
       });
+
       await this.usersJewelsRepository.save(usersJewels);
 
       return await this.userService.findOne(userId);

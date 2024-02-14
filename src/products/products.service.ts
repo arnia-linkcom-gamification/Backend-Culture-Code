@@ -11,8 +11,8 @@ import { CreateProductDto, UploadImageDto } from './dto/create-product.dto';
 import { Product } from './entities/product.entity';
 import { UsersService } from '../users/users.service';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { UsersJewels } from 'src/jewels/entities/users-jewels.entity';
-import { User } from 'src/users/entities/user.entity';
+import { UsersJewels } from '../jewels/entities/users-jewels.entity';
+import { User } from '../users/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { createClient } from '@supabase/supabase-js';
 
@@ -94,7 +94,7 @@ export class ProductsService {
     }
   }
 
-  async findAll(page: number, limit: number, price: number, name: string) {
+  async findAll(page?: number, limit?: number, price?: number, name?: string) {
     try {
       const products = await this.productRepository.find({
         where: { price, name: ILike(`%${name}%`) },
@@ -157,7 +157,8 @@ export class ProductsService {
   async softDelete(id: number) {
     try {
       await this.findOne(id);
-      return await this.productRepository.softDelete(id);
+      await this.productRepository.softDelete(id);
+      return;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
@@ -167,7 +168,8 @@ export class ProductsService {
   async restore(id: number) {
     try {
       await this.findOne(id);
-      return await this.productRepository.restore(id);
+      await this.productRepository.restore(id);
+      return;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);

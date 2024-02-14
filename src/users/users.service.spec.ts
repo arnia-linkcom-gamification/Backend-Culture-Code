@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
+import { HttpException } from '@nestjs/common';
+import { UsersService } from '../users/users.service';
 import { userRepositoryMock } from '../testing/users/user-repository.mock';
 import { listAllUsersMock } from '../testing/users/list-all-users.mock';
 import { createUserDtoMock } from '../testing/users/create-user-dto.mock';
-import { HttpException } from '@nestjs/common';
 import { userMock } from '../testing/users/user.mock';
 import { updateUserMock } from '../testing/users/update-user-dto.mock';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -29,9 +29,21 @@ describe('UsersService', () => {
       const result = await userService.create(createUserDtoMock);
       expect(result).toEqual(userMock);
     });
+
+    it('Should return an error message', async () => {
+      jest
+        .spyOn(userRepositoryMock.useValue, 'exists')
+        .mockRejectedValueOnce(
+          new HttpException('An user with this email already exists.', 409),
+        );
+
+      await expect(userService.create(createUserDtoMock)).rejects.toThrow(
+        HttpException,
+      );
+    });
   });
 
-  describe('Get all users', () => {
+  describe('Find all users', () => {
     it('Should return a list of users', async () => {
       const result = await userService.findAll();
       expect(result).toEqual(listAllUsersMock);
@@ -39,21 +51,17 @@ describe('UsersService', () => {
   });
 
   describe('Find User by Id', () => {
-    it('Should return an user', async () => {
+    it('Should return the user', async () => {
       const result = await userService.findOne(1);
       expect(result).toEqual(listAllUsersMock[0]);
     });
-  });
 
-  describe('Not find User by Id', () => {
     it('Should return an error stating that the user was not found', async () => {
       jest
         .spyOn(userRepositoryMock.useValue, 'findOne')
         .mockRejectedValueOnce(
           new HttpException('User with id:1 not found.', 400),
         );
-      // const result = await userService.findOne(1);
-      // expect(result).rejects.toThrow(HttpException);
       await expect(userService.findOne(1)).rejects.toThrow(HttpException);
     });
   });
@@ -65,6 +73,49 @@ describe('UsersService', () => {
         updateUserMock as UpdateUserDto,
       );
       expect(result).toEqual(updatedUserMock);
+    });
+
+    it('Should return an error stating that the user was not found', async () => {
+      jest
+        .spyOn(userRepositoryMock.useValue, 'findOne')
+        .mockRejectedValueOnce(
+          new HttpException('User with id:1 not found.', 400),
+        );
+      await expect(
+        userService.update(1, updateUserMock as UpdateUserDto),
+      ).rejects.toThrow(HttpException);
+    });
+  });
+
+  describe('SoftDelete User', () => {
+    it('Should perform logical deletion of the user record', async () => {
+      const result = await userService.softDelete(1);
+      expect(result).toBeUndefined();
+    });
+
+    it('Should return an error stating that the user was not found', async () => {
+      jest
+        .spyOn(userRepositoryMock.useValue, 'findOne')
+        .mockRejectedValueOnce(
+          new HttpException('User with id:1 not found.', 404),
+        );
+      await expect(userService.softDelete(1)).rejects.toThrow(HttpException);
+    });
+  });
+
+  describe('Restore User', () => {
+    it('Should restore user', async () => {
+      const result = await userService.restore(1);
+      expect(result).toBeUndefined();
+    });
+
+    it('Should return an error stating that the user was not found', async () => {
+      jest
+        .spyOn(userRepositoryMock.useValue, 'findOne')
+        .mockRejectedValueOnce(
+          new HttpException('User with id:1 not found.', 404),
+        );
+      await expect(userService.restore(1)).rejects.toThrow(HttpException);
     });
   });
 });

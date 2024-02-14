@@ -171,7 +171,8 @@ export class UsersService {
   async softDelete(id: number) {
     try {
       await this.findOne(id);
-      return await this.usersRepository.softDelete(id);
+      await this.usersRepository.softDelete(id);
+      return;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
@@ -181,7 +182,8 @@ export class UsersService {
   async restore(id: number) {
     try {
       await this.findOne(id);
-      return await this.usersRepository.restore(id);
+      await this.usersRepository.restore(id);
+      return;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
