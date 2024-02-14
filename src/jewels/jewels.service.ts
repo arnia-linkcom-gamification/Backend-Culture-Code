@@ -71,7 +71,7 @@ export class JewelsService {
 
       const name = file.originalname.split('.')[0];
       const extension = file.originalname.split('.')[1];
-      const sanitizedName = name.replace(/[^a-z0-9]/gi, '-');
+      const sanitizedName = name.replace(/[^a-zA-Z0-9]/gi, '-');
       const newFileName =
         sanitizedName.split(' ').join('_') + '_' + Date.now() + '.' + extension;
 
