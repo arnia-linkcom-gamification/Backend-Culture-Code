@@ -23,7 +23,7 @@ export class Product {
   @Column({ type: 'integer' })
   price: number;
 
-  @Column({ type: 'varchar', length: 256, nullable: true })
+  @Column({ type: 'varchar' })
   image: string;
 
   @ManyToMany(() => User, (user) => user.products, {

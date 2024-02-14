@@ -11,6 +11,8 @@ import {
   HttpCode,
   HttpStatus,
   ParseIntPipe,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -23,7 +25,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
-import { CreateProductDto } from './dto/create-product.dto';
+import { CreateProductDto, UploadImageDto } from './dto/create-product.dto';
 import { CreatedProductDoc } from './docs/create-product.doc';
 import {
   ResponseCreateProductDoc,
@@ -38,6 +40,7 @@ import { RoleEnum } from '../enums/role.enum';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ResponseUpdateProductDoc } from './docs/response-update-product.doc';
 import { ResponseRedeemProductDoc } from './docs/response-redeem-product.doc';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('3 - Produtos')
 @Controller('products')
@@ -51,8 +54,12 @@ export class ProductsController {
   @ApiConflictResponse({ type: ResposeProductExist })
   @ApiBody({ type: CreatedProductDoc })
   @ApiBearerAuth()
-  async create(@Body() payload: CreateProductDto) {
-    return await this.productsService.create(payload);
+  @UseInterceptors(FileInterceptor('productImage'))
+  async create(
+    @Body() payload: CreateProductDto,
+    @UploadedFile() productImage: UploadImageDto,
+  ) {
+    return await this.productsService.create(payload, productImage);
   }
 
   @Get()
@@ -79,11 +86,13 @@ export class ProductsController {
   @Roles(RoleEnum.admin)
   @ApiOkResponse({ type: ResponseUpdateProductDoc })
   @ApiNotFoundResponse({ type: ResponseNotFoundProductDoc })
+  @UseInterceptors(FileInterceptor('productImage'))
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() payload: UpdateProductDto,
+    @UploadedFile() productImage: UploadImageDto,
   ) {
-    return await this.productsService.update(id, payload);
+    return await this.productsService.update(id, payload, productImage);
   }
 
   @Delete(':id')

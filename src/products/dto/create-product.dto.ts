@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
+import {
+  IsNotEmpty,
+  // IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 
 export class CreateProductDto {
   @IsString()
@@ -10,7 +16,23 @@ export class CreateProductDto {
   @IsNotEmpty()
   description: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
   price: number;
+
+  @IsOptional()
+  image: string;
+}
+
+export class UploadImageDto {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  // stream: Readable;
+  // destination: string;
+  filename: string;
+  // path: string;
+  buffer: Buffer;
 }

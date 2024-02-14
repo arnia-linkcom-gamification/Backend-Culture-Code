@@ -28,6 +28,9 @@ export class CreateUserDto {
   @MaxLength(128)
   email: string;
 
+  @IsOptional()
+  profileImg: string;
+
   @IsString()
   @IsNotEmpty()
   @MinLength(8)
@@ -48,4 +51,17 @@ export class CreateUserDto {
   @IsEnum(RoleEnum)
   @IsOptional()
   role: RoleEnum;
+}
+
+export class UploadImageDto {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  // stream: Readable;
+  // destination: string;
+  filename: string;
+  // path: string;
+  buffer: Buffer;
 }

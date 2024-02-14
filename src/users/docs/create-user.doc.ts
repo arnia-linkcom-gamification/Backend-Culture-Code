@@ -28,14 +28,6 @@ export class CreatedUserDoc {
 
   @ApiProperty({
     type: String,
-    description: 'Refere-se a url da imagem do usuário.',
-    example: null,
-    required: false,
-  })
-  profileImg: string;
-
-  @ApiProperty({
-    type: String,
     description:
       'Refere-se a senha do usuário. No mínimo 8 caracters, precisa de 1 caracter minúsculo, precisa de 1 caracter maiúsculo, precisa de 1 número e precisa de 1 símbolo.',
     example: 'S3nh@FoRt3!',
