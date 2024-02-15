@@ -15,6 +15,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+  app.enableCors();
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Arnia/Linkcom - Gamification')
@@ -29,6 +30,6 @@ async function bootstrap() {
       operationsSorter: 'alpha',
     },
   });
-  await app.listen(configService.get<number>('APP_PORT') || 3000);
+  await app.listen(configService.get<number>('PORT') || 3000);
 }
 bootstrap();
