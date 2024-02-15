@@ -14,6 +14,7 @@ import { redeemProductsMock } from '../testing/products/redeem-product.mock';
 import { userMock } from '../testing/users/user.mock';
 import { usersJewelsMock } from '../testing/users/users-jewels.mock';
 import { createProductMock } from '../testing/products/create-product.mock';
+import { imageMock } from '../testing/image/image.mock';
 
 describe('ProductsService', () => {
   let productService: ProductsService;
@@ -38,23 +39,29 @@ describe('ProductsService', () => {
 
   describe('Create product', () => {
     it('Should save product in database', async () => {
+      const image = await imageMock();
+
       jest
         .spyOn(productsRepositoryMock.useValue, 'findOne')
         .mockResolvedValueOnce(false);
-      const result = await productService.create(createProductMock);
+      jest.spyOn(productService, 'upload').mockResolvedValueOnce('string');
+
+      const result = await productService.create(createProductMock, image);
       expect(result).toEqual(productMock);
     });
 
     it('Should return an error message', async () => {
+      const image = await imageMock();
       jest
         .spyOn(productsRepositoryMock.useValue, 'findOne')
         .mockRejectedValueOnce(
           new HttpException('This product already exists', 409),
         );
+      jest.spyOn(productService, 'upload').mockResolvedValueOnce('string');
 
-      await expect(productService.create(createProductMock)).rejects.toThrow(
-        HttpException,
-      );
+      await expect(
+        productService.create(createProductMock, image),
+      ).rejects.toThrow(HttpException);
     });
   });
 

@@ -10,6 +10,7 @@ import { updateProductMock } from '../testing/products/update-product-mock';
 import { updatedProductMock } from '../testing/products/updated-product.mock';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { redeemProductsMock } from '../testing/products/redeem-product.mock';
+import { imageMock } from '../testing/image/image.mock';
 
 describe('ProductsController', () => {
   let productController: ProductsController;
@@ -32,7 +33,8 @@ describe('ProductsController', () => {
 
   describe('Create', () => {
     it('Should create a product', async () => {
-      const result = await productController.create(createProductMock);
+      const image = await imageMock();
+      const result = await productController.create(createProductMock, image);
 
       expect(result).toEqual(productMock);
     });
@@ -56,9 +58,11 @@ describe('ProductsController', () => {
 
   describe('Update product', () => {
     it('Should return product updated', async () => {
+      const image = await imageMock();
       const result = await productController.update(
         1,
         updateProductMock as UpdateProductDto,
+        image,
       );
 
       expect(result).toEqual(updatedProductMock);

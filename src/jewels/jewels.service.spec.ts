@@ -13,6 +13,7 @@ import { updatedJewelMock } from '../testing/jewels/updated-jewel.mock';
 import { jewelRepositoryMock } from '../testing/jewels/jewel-repository.mock';
 import { updatedUserMock } from '../testing/users/updated-user.mock';
 import { updateUserAssignJewelMock } from '../testing/jewels/update-user-assing-jewel.mock';
+import { imageMock } from '../testing/image/image.mock';
 
 describe('JewelsService', () => {
   let jewelService: JewelsService;
@@ -37,22 +38,28 @@ describe('JewelsService', () => {
 
   describe('Create jewel', () => {
     it('Should return a list of jewels', async () => {
+      const image = await imageMock();
+
+      jest.spyOn(jewelService, 'upload').mockResolvedValueOnce('string');
+
       const result = await jewelService.create(
-        createJewelMock as unknown as CreateJewelDto,
+        createJewelMock as CreateJewelDto,
+        image,
       );
       expect(result).toEqual(listAllJewelsMock[0]);
     });
 
     it('Should return an error message', async () => {
+      const image = await imageMock();
       jest
         .spyOn(jewelRepositoryMock.useValue, 'exists')
         .mockRejectedValueOnce(
           new HttpException('This jewel already exists.', 409),
         );
 
-      await expect(jewelService.create(createJewelMock)).rejects.toThrow(
-        HttpException,
-      );
+      await expect(
+        jewelService.create(createJewelMock as CreateJewelDto, image),
+      ).rejects.toThrow(HttpException);
     });
   });
 
