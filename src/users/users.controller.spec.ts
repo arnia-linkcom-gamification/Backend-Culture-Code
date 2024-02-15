@@ -10,6 +10,7 @@ import { listAllUsersMock } from '../testing/users/list-all-users.mock';
 import { updateUserMock } from '../testing/users/update-user-dto.mock';
 import { updatedUserMock } from '../testing/users/updated-user.mock';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { imageMock } from '../testing/image/image.mock';
 
 describe('UsersController', () => {
   let userController: UsersController;
@@ -32,7 +33,8 @@ describe('UsersController', () => {
 
   describe('Create user', () => {
     it('Should create an user', async () => {
-      const result = await userController.create(createUserDtoMock);
+      const image = await imageMock();
+      const result = await userController.create(createUserDtoMock, image);
 
       expect(result).toEqual(userMock);
     });

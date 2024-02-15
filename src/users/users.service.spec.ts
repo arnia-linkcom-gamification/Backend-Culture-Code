@@ -8,6 +8,7 @@ import { userMock } from '../testing/users/user.mock';
 import { updateUserMock } from '../testing/users/update-user-dto.mock';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { updatedUserMock } from '../testing/users/updated-user.mock';
+import { imageMock } from '../testing/image/image.mock';
 
 describe('UsersService', () => {
   let userService: UsersService;
@@ -26,20 +27,23 @@ describe('UsersService', () => {
 
   describe('Create User', () => {
     it('Should creat and return user saved in the database', async () => {
-      const result = await userService.create(createUserDtoMock);
+      const image = await imageMock();
+      jest.spyOn(userService, 'upload').mockResolvedValueOnce('string');
+      const result = await userService.create(createUserDtoMock, image);
       expect(result).toEqual(userMock);
     });
 
     it('Should return an error message', async () => {
+      const image = await imageMock();
       jest
         .spyOn(userRepositoryMock.useValue, 'exists')
         .mockRejectedValueOnce(
           new HttpException('An user with this email already exists.', 409),
         );
 
-      await expect(userService.create(createUserDtoMock)).rejects.toThrow(
-        HttpException,
-      );
+      await expect(
+        userService.create(createUserDtoMock, image),
+      ).rejects.toThrow(HttpException);
     });
   });
 

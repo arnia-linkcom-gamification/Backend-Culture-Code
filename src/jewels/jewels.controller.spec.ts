@@ -9,6 +9,7 @@ import { UpdateJewelDto } from './dto/update-jewel.dto';
 import { updatedJewelMock } from '../testing/jewels/updated-jewel.mock';
 import { createJewelMock } from '../testing/jewels/create-jewel.mock';
 import { assignJewelUserMock } from '../testing/jewels/assing-jewel-user.mock';
+import { imageMock } from '../testing/image/image.mock';
 
 describe('JewelsController', () => {
   let jewelController: JewelsController;
@@ -31,7 +32,8 @@ describe('JewelsController', () => {
 
   describe('Create jewel', () => {
     it('Should return the jewel created', async () => {
-      const result = await jewelController.create(createJewelMock);
+      const image = await imageMock();
+      const result = await jewelController.create(createJewelMock, image);
 
       expect(result).toEqual(listAllJewelsMock[0]);
     });
@@ -55,9 +57,11 @@ describe('JewelsController', () => {
 
   describe('Update jewel', () => {
     it('Should return the jewel updated', async () => {
+      const image = await imageMock();
       const result = await jewelController.update(
         1,
         updateJewelDtoMock as UpdateJewelDto,
+        image,
       );
 
       expect(result).toEqual(updatedJewelMock);
