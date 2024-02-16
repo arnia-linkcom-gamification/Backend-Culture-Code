@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { UploadImageDto } from '../dto/create-product.dto';
 
 export class ResponseCreateProductDoc {
   @ApiProperty({
@@ -30,12 +31,13 @@ export class ResponseCreateProductDoc {
   price: number;
 
   @ApiProperty({
-    type: String,
-    description: 'Caminho do arquivo',
-    example: null,
-    nullable: true,
+    type: 'string',
+    format: 'binary',
+    description: 'Refere-se a imagem do produto.',
+    example: 'imagem.png',
+    required: false,
   })
-  image: string;
+  image: UploadImageDto;
 
   @ApiProperty({
     type: Date,

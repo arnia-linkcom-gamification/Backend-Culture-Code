@@ -14,6 +14,7 @@ import { jewelRepositoryMock } from '../testing/jewels/jewel-repository.mock';
 import { updatedUserMock } from '../testing/users/updated-user.mock';
 import { updateUserAssignJewelMock } from '../testing/jewels/update-user-assing-jewel.mock';
 import { imageMock } from '../testing/image/image.mock';
+import { mockedUploadImage } from '../testing/utils/upload.image.mock';
 
 describe('JewelsService', () => {
   let jewelService: JewelsService;
@@ -37,20 +38,22 @@ describe('JewelsService', () => {
   });
 
   describe('Create jewel', () => {
-    it('Should return a list of jewels', async () => {
-      const image = await imageMock();
+    it('Should create a jewels', async () => {
+      const jewelImage = await imageMock();
 
-      jest.spyOn(jewelService, 'upload').mockResolvedValueOnce('string');
+      jest
+        .spyOn(await mockedUploadImage, 'uploadImage')
+        .mockResolvedValue('mockedImageUrl');
 
       const result = await jewelService.create(
         createJewelMock as CreateJewelDto,
-        image,
+        jewelImage,
       );
       expect(result).toEqual(listAllJewelsMock[0]);
     });
 
     it('Should return an error message', async () => {
-      const image = await imageMock();
+      const jewelImage = await imageMock();
       jest
         .spyOn(jewelRepositoryMock.useValue, 'exists')
         .mockRejectedValueOnce(
@@ -58,7 +61,7 @@ describe('JewelsService', () => {
         );
 
       await expect(
-        jewelService.create(createJewelMock as CreateJewelDto, image),
+        jewelService.create(createJewelMock as CreateJewelDto, jewelImage),
       ).rejects.toThrow(HttpException);
     });
   });
@@ -90,9 +93,16 @@ describe('JewelsService', () => {
 
   describe('Update jewel', () => {
     it('Should return updated jewel data', async () => {
+      const jewelImage = await imageMock();
+
+      jest
+        .spyOn(await mockedUploadImage, 'uploadImage')
+        .mockResolvedValue('mockedImageUrl');
+
       const result = await jewelService.update(
         1,
         updateJewelDtoMock as UpdateJewelDto,
+        jewelImage,
       );
       expect(result).toEqual(updatedJewelMock);
     });

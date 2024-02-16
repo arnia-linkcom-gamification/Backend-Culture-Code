@@ -18,6 +18,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -50,8 +51,10 @@ export class ProductsController {
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
+  @ApiConsumes('multipart/form-data')
   @ApiCreatedResponse({ type: ResponseCreateProductDoc })
   @ApiConflictResponse({ type: ResposeProductExist })
+  @ApiConsumes('multipart/form-data')
   @ApiBody({ type: CreatedProductDoc })
   @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('productImage'))
@@ -84,6 +87,7 @@ export class ProductsController {
   @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.admin)
+  @ApiConsumes('multipart/form-data')
   @ApiOkResponse({ type: ResponseUpdateProductDoc })
   @ApiNotFoundResponse({ type: ResponseNotFoundProductDoc })
   @UseInterceptors(FileInterceptor('productImage'))
