@@ -85,6 +85,7 @@ export class JewelsController {
   }
 
   @Patch(':id')
+  @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UpdateJewelDoc })
   @ApiOkResponse({ type: ResponseUpdateJewelDoc })
   @ApiNotFoundResponse({ type: NotFoundJewel })

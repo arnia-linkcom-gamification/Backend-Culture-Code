@@ -95,6 +95,7 @@ export class UsersController {
   }
 
   @Patch('me')
+  @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UpdateUserDoc })
   @ApiOkResponse({ type: ResponseUpdateUserDoc })
   @ApiBearerAuth()
@@ -109,6 +110,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UpdateUserDoc })
   @ApiOkResponse({ type: ResponseUpdateUserDoc })
   @ApiNotFoundResponse({ type: NotFoundUser })

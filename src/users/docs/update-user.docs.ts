@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { RoleEnum } from '../../enums/role.enum';
+import { UploadImageDto } from '../dto/create-user.dto';
 
 export class UpdateUserDoc {
   @ApiProperty({
@@ -18,6 +20,15 @@ export class UpdateUserDoc {
   email: string;
 
   @ApiProperty({
+    type: 'string',
+    format: 'binary',
+    description: 'Refere-se a imagem de perfil do usuário.',
+    example: 'imagem.png',
+    required: false,
+  })
+  profileImg: UploadImageDto;
+
+  @ApiProperty({
     type: String,
     description:
       'Refere-se a senha do usuário. No mínimo 8 caracters, precisa de 1 caracter minúsculo, precisa de 1 caracter maiúsculo, precisa de 1 número e precisa de 1 símbolo.',
@@ -33,4 +44,12 @@ export class UpdateUserDoc {
     required: true,
   })
   confirmPassword: string;
+
+  @ApiProperty({
+    enum: RoleEnum,
+    description: 'Refere-se ao tipo de usuário.',
+    example: RoleEnum.customer,
+    required: false,
+  })
+  role: RoleEnum;
 }

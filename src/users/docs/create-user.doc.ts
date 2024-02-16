@@ -34,7 +34,7 @@ export class CreatedUserDoc {
     example: 'imagem.png',
     required: false,
   })
-  image: UploadImageDto;
+  profileImg: UploadImageDto;
 
   @ApiProperty({
     type: String,
