@@ -11,7 +11,7 @@ export const productsRepositoryMock = {
     create: jest.fn().mockReturnValue(productMock),
     save: jest.fn(),
     find: jest.fn().mockResolvedValue(listAllProductsMock),
-    findOne: jest.fn().mockResolvedValue(productMock),
+    findOne: jest.fn().mockResolvedValue(listAllProductsMock[0]),
     update: jest.fn().mockResolvedValueOnce(updatedProductMock),
     softDelete: jest.fn(),
     restore: jest.fn(),

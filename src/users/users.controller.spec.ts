@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
-//import { UsersService } from './users.service';
 import { AuthGuard } from '../auth/guards/auth-guard';
 import { authGuardMock } from '../testing/auth/auth-guard.mock';
 import { usersServiceMock } from '../testing/users/users-service.mock';
@@ -70,7 +69,6 @@ describe('UsersController', () => {
         1,
         updateUserMock as UpdateUserDto,
       );
-
       expect(result).toEqual(updatedUserMock);
     });
 

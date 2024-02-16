@@ -13,7 +13,7 @@ import { UsersService } from '../users/users.service';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { UsersJewels } from '../jewels/entities/users-jewels.entity';
 import { User } from '../users/entities/user.entity';
-import { uploadImage } from 'src/utils/upload.image';
+import { uploadImage } from '../utils/upload.image';
 
 @Injectable()
 export class ProductsService {

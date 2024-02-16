@@ -9,6 +9,7 @@ import { updateUserMock } from '../testing/users/update-user-dto.mock';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { updatedUserMock } from '../testing/users/updated-user.mock';
 import { imageMock } from '../testing/image/image.mock';
+import { mockedUploadImage } from '../testing/utils/upload.image.mock';
 
 describe('UsersService', () => {
   let userService: UsersService;
@@ -28,7 +29,11 @@ describe('UsersService', () => {
   describe('Create User', () => {
     it('Should creat and return user saved in the database', async () => {
       const image = await imageMock();
-      jest.spyOn(userService, 'upload').mockResolvedValueOnce('string');
+
+      jest
+        .spyOn(await mockedUploadImage, 'uploadImage')
+        .mockResolvedValue('mockedImageUrl');
+
       const result = await userService.create(createUserDtoMock, image);
       expect(result).toEqual(userMock);
     });
@@ -72,9 +77,16 @@ describe('UsersService', () => {
 
   describe('Update User', () => {
     it('Should return updated user data', async () => {
+      const image = await imageMock();
+
+      jest
+        .spyOn(await mockedUploadImage, 'uploadImage')
+        .mockResolvedValue('mockedImageUrl');
+
       const result = await userService.update(
         1,
         updateUserMock as UpdateUserDto,
+        image,
       );
       expect(result).toEqual(updatedUserMock);
     });
