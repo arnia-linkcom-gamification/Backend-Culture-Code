@@ -57,6 +57,9 @@ export class ProductsService {
   async findAll(page?: number, limit?: number, price?: number, name?: string) {
     try {
       const pageSize = limit === 0 ? 10 : limit;
+      const totalProducts = await this.productRepository.count({
+        where: { price, name: ILike(`%${name}%`) }
+      });
       const products = await this.productRepository.find({
         where: { price, name: ILike(`%${name}%`) },
         skip: (page - 1) * pageSize,
@@ -67,7 +70,7 @@ export class ProductsService {
       });
 
       return {
-        pages: Math.ceil(products.length / pageSize),
+        pages: Math.ceil(totalProducts / pageSize),
         currentPage: page,
         pageSize: pageSize,
         count: products.length,
