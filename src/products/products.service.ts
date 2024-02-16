@@ -56,18 +56,20 @@ export class ProductsService {
 
   async findAll(page?: number, limit?: number, price?: number, name?: string) {
     try {
+      const pageSize = limit === 0 ? 10 : limit;
       const products = await this.productRepository.find({
         where: { price, name: ILike(`%${name}%`) },
-        skip: (page - 1) * limit,
-        take: limit,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
         order: {
           createAt: 'DESC',
         },
       });
 
       return {
+        pages: Math.ceil(products.length / pageSize),
         currentPage: page,
-        pageSize: limit,
+        pageSize: pageSize,
         count: products.length,
         data: products,
       };
