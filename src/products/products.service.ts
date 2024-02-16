@@ -13,8 +13,7 @@ import { UsersService } from '../users/users.service';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { UsersJewels } from '../jewels/entities/users-jewels.entity';
 import { User } from '../users/entities/user.entity';
-import { ConfigService } from '@nestjs/config';
-import { createClient } from '@supabase/supabase-js';
+import { uploadImage } from 'src/utils/upload.image';
 
 @Injectable()
 export class ProductsService {
@@ -43,51 +42,12 @@ export class ProductsService {
         throw new BadRequestException('productImage should not be empty');
       }
 
-      payload.image = await this.upload(productImage);
+      payload.image = await uploadImage(productImage);
 
       const newProduct = this.productRepository.create(payload);
 
       await this.productRepository.save(newProduct);
       return newProduct;
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
-  async upload(file: UploadImageDto) {
-    try {
-      const configService = new ConfigService();
-      const supabaseBucket = configService.get<string>('SUPABASE_DB_NAME');
-      const supabase = createClient(
-        configService.get<string>('SUPABASE_URL'),
-        configService.get<string>('SUPABASE_KEY'),
-        {
-          auth: {
-            persistSession: false,
-          },
-        },
-      );
-
-      const name = file.originalname.split('.')[0];
-      const extension = file.originalname.split('.')[1];
-      const sanitizedName = name.replace(/[^a-zA-Z0-9]/gi, '-');
-      const newFileName =
-        sanitizedName.split(' ').join('_') + '_' + Date.now() + '.' + extension;
-
-      const imageData = await supabase.storage
-        .from(supabaseBucket)
-        .upload(newFileName, file.buffer, {
-          upsert: true,
-        });
-
-      const image = await supabase.storage
-        .from(supabaseBucket)
-        .createSignedUrl(imageData.data.path, 365);
-
-      const profileImg = image.data.signedUrl;
-
-      return profileImg;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
@@ -142,7 +102,7 @@ export class ProductsService {
 
       payload.image = undefined;
       payload.image = productImage
-        ? await this.upload(productImage)
+        ? await uploadImage(productImage)
         : payload.image;
 
       await this.productRepository.update(id, payload);

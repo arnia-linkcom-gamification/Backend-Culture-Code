@@ -14,8 +14,7 @@ import { jewel } from '../utils/consts/jewels';
 import { User } from '../users/entities/user.entity';
 import { UsersJewels } from './entities/users-jewels.entity';
 import { UsersService } from '../users/users.service';
-import { ConfigService } from '@nestjs/config';
-import { createClient } from '@supabase/supabase-js';
+import { uploadImage } from 'src/utils/upload.image';
 
 @Injectable()
 export class JewelsService {
@@ -42,52 +41,13 @@ export class JewelsService {
         throw new BadRequestException('jewelsImage should not be empty');
       }
 
-      payload.image = await this.upload(jewelImage);
+      payload.image = await uploadImage(jewelImage);
       const newJewel = this.jewelRepository.create(payload);
       newJewel.habilities = jewel[payload.type];
 
       await this.jewelRepository.save(newJewel);
 
       return newJewel;
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
-  async upload(file: UploadImageDto) {
-    try {
-      const configService = new ConfigService();
-      const supabaseBucket = configService.get<string>('SUPABASE_DB_NAME');
-      const supabase = createClient(
-        configService.get<string>('SUPABASE_URL'),
-        configService.get<string>('SUPABASE_KEY'),
-        {
-          auth: {
-            persistSession: false,
-          },
-        },
-      );
-
-      const name = file.originalname.split('.')[0];
-      const extension = file.originalname.split('.')[1];
-      const sanitizedName = name.replace(/[^a-zA-Z0-9]/gi, '-');
-      const newFileName =
-        sanitizedName.split(' ').join('_') + '_' + Date.now() + '.' + extension;
-
-      const imageData = await supabase.storage
-        .from(supabaseBucket)
-        .upload(newFileName, file.buffer, {
-          upsert: true,
-        });
-
-      const image = await supabase.storage
-        .from(supabaseBucket)
-        .createSignedUrl(imageData.data.path, 365);
-
-      const profileImg = image.data.signedUrl;
-
-      return profileImg;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
@@ -129,7 +89,7 @@ export class JewelsService {
 
       payload.image = undefined;
       payload.image = jewelImage
-        ? await this.upload(jewelImage)
+        ? await uploadImage(jewelImage)
         : payload.image;
 
       await this.jewelRepository.update(id, payload);

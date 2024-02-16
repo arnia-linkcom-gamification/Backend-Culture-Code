@@ -18,6 +18,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -50,6 +51,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @ApiConsumes('multipart/form-data')
   @ApiBody({ type: CreatedUserDoc })
   @ApiCreatedResponse({ type: ResponseCreateUserDoc })
   @ApiConflictResponse({ type: ResponseCreateUserEmailExistDoc })

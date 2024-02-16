@@ -18,6 +18,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -52,6 +53,7 @@ export class ProductsController {
   @Roles(RoleEnum.admin)
   @ApiCreatedResponse({ type: ResponseCreateProductDoc })
   @ApiConflictResponse({ type: ResposeProductExist })
+  @ApiConsumes('multipart/form-data')
   @ApiBody({ type: CreatedProductDoc })
   @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('productImage'))
