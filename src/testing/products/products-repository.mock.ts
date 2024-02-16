@@ -9,9 +9,10 @@ export const productsRepositoryMock = {
   useValue: {
     exists: jest.fn().mockResolvedValue(false),
     create: jest.fn().mockReturnValue(productMock),
+    count: jest.fn().mockResolvedValue(2),
     save: jest.fn(),
     find: jest.fn().mockResolvedValue(listAllProductsMock),
-    findOne: jest.fn().mockResolvedValue(productMock),
+    findOne: jest.fn().mockResolvedValue(listAllProductsMock[0]),
     update: jest.fn().mockResolvedValueOnce(updatedProductMock),
     softDelete: jest.fn(),
     restore: jest.fn(),

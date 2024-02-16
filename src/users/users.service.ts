@@ -7,12 +7,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { createClient } from '@supabase/supabase-js';
 import { CreateUserDto, UploadImageDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UsersJewels } from '../jewels/entities/users-jewels.entity';
-import { ConfigService } from '@nestjs/config';
+import { uploadImage } from '../utils/upload.image';
 
 @Injectable()
 export class UsersService {
@@ -31,7 +30,7 @@ export class UsersService {
       }
 
       payload.profileImg = undefined;
-      payload.profileImg = image ? await this.upload(image) : null;
+      payload.profileImg = image ? await uploadImage(image) : null;
 
       const newUser = this.usersRepository.create(payload);
 
@@ -41,44 +40,6 @@ export class UsersService {
       delete newUserWithoutPass.password;
 
       return newUserWithoutPass;
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
-  async upload(file: UploadImageDto) {
-    try {
-      const configService = new ConfigService();
-      const supabaseBucket = configService.get<string>('SUPABASE_DB_NAME');
-      const supabase = createClient(
-        configService.get<string>('SUPABASE_URL'),
-        configService.get<string>('SUPABASE_KEY'),
-        {
-          auth: {
-            persistSession: false,
-          },
-        },
-      );
-      const name = file.originalname.split('.')[0];
-      const extension = file.originalname.split('.')[1];
-      const sanitizedName = name.replace(/[^a-zA-Z0-9]/gi, '-');
-      const newFileName =
-        sanitizedName.split(' ').join('_') + '_' + Date.now() + '.' + extension;
-
-      const imageData = await supabase.storage
-        .from(supabaseBucket)
-        .upload(newFileName, file.buffer, {
-          upsert: true,
-        });
-
-      const image = await supabase.storage
-        .from(supabaseBucket)
-        .createSignedUrl(imageData.data.path, 365);
-
-      const profileImg = image.data.signedUrl;
-
-      return profileImg;
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, error.status);
@@ -151,7 +112,7 @@ export class UsersService {
       }
       payload.profileImg = undefined;
       payload.profileImg = image
-        ? await this.upload(image)
+        ? await uploadImage(image)
         : payload.profileImg;
 
       if (payload.password) {

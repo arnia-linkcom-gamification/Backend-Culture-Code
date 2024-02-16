@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { RoleEnum } from '../../enums/role.enum';
+import { UploadImageDto } from '../dto/create-user.dto';
 
 export class CreatedUserDoc {
   @ApiProperty({
@@ -25,6 +26,15 @@ export class CreatedUserDoc {
     required: true,
   })
   email: string;
+
+  @ApiProperty({
+    type: 'string',
+    format: 'binary',
+    description: 'Refere-se a imagem de perfil do usuário.',
+    example: 'imagem.png',
+    required: false,
+  })
+  profileImg: UploadImageDto;
 
   @ApiProperty({
     type: String,

@@ -3,7 +3,6 @@ import { CreateUserDto } from './create-user.dto';
 import {
   IsString,
   IsOptional,
-  IsNumber,
   IsNotEmpty,
   IsStrongPassword,
   MinLength,
@@ -29,8 +28,4 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsNotEmpty()
   @Match('password', { message: "Passwords don't matches." })
   confirmPassword: string;
-
-  @IsNumber()
-  @IsOptional()
-  credits: number;
 }

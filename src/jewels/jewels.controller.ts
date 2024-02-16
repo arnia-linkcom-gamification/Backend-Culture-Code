@@ -17,6 +17,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -49,6 +50,7 @@ export class JewelsController {
   constructor(private readonly jewelsService: JewelsService) {}
 
   @Post()
+  @ApiConsumes('multipart/form-data')
   @ApiBody({ type: CreateJewelDoc })
   @ApiCreatedResponse({ type: ResponseCreateJewelDoc })
   @ApiBadRequestResponse({ type: ResponseCreateJewelBadRequestDoc })
@@ -83,6 +85,7 @@ export class JewelsController {
   }
 
   @Patch(':id')
+  @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UpdateJewelDoc })
   @ApiOkResponse({ type: ResponseUpdateJewelDoc })
   @ApiNotFoundResponse({ type: NotFoundJewel })
