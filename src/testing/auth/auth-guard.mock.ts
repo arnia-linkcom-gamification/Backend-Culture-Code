@@ -5,7 +5,7 @@ export const authGuardMock: CanActivate = {
   canActivate: jest.fn((context: ExecutionContext) => {
     const request = context.switchToHttp().getRequest();
 
-    request['user'] = requestMock;
+    request['token'] = requestMock;
 
     return true;
   }),

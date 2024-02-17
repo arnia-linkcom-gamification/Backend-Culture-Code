@@ -8,7 +8,8 @@ import { authGuardMock } from '../testing/auth/auth-guard.mock';
 import { createUserDtoMock } from '../testing/users/create-user-dto.mock';
 import { userMock } from '../testing/users/user.mock';
 import { listAllUsersMock } from '../testing/users/list-all-users.mock';
-import { requestMock } from '../testing/req/request.mock';
+import { updateUserMock } from '../testing/users/update-user-dto.mock';
+import { updatedUserMock } from '../testing/users/updated-user.mock';
 
 describe('Users e2e', () => {
   let app: INestApplication;
@@ -26,11 +27,6 @@ describe('Users e2e', () => {
     app = module.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
 
-    app.use((req, res, next) => {
-      Object.assign(req, requestMock);
-      next();
-    });
-
     await app.init();
   });
 
@@ -42,96 +38,90 @@ describe('Users e2e', () => {
     expect(app).toBeDefined();
   });
 
-  // describe('POST Users - e2e', () => {
-  //   it('POST - /users', async () => {
-  //     const response = await request(app.getHttpServer())
-  //       .post('/users')
-  //       .send(createUserDtoMock);
+  describe('POST Users - e2e', () => {
+    it('POST - /users', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/users')
+        .send(createUserDtoMock);
 
-  //     expect(response.statusCode).toEqual(201);
-  //     expect(response.body).toEqual(userMock);
-  //     expect(response.body).toHaveProperty('id');
-  //   });
-  // });
-
-  // describe('GET Users - e2e', () => {
-  //   it('GET - /users', async () => {
-  //     const response = await request(app.getHttpServer()).get('/users');
-  //     expect(response.status).toEqual(200);
-  //     // return request(app.getHttpServer()).get('/users').expect(200);
-  //   });
-
-  //   it('GET - /users/me', async () => {
-  //     const response = await request(app.getHttpServer()).get('/users/me');
-
-  //     expect(response.statusCode).toEqual(HttpStatus.OK);
-  //   });
-
-  // it('GET - /users/id', async () => {
-  //   const response = await request(app.getHttpServer()).get('/users/1');
-
-  //   expect(response.status).toBe(200);
-  // });
-  //   });
-
-  //   describe('POST Users - e2e', () => {
-  //     it('POST - /users', async () => {
-  //       const response = await request(app.getHttpServer()).post('/users');
-
-  //       expect(response.status).toEqual(201);
-  //     });
-  //   });
-
-  describe('PATCH Users - e2e', () => {
-    it('PATCH - /users/me', async () => {
-      const response = await request(app.getHttpServer()).patch('/users/me');
-      expect(response.status).toEqual(201);
-    });
-
-    it('PATCH - /users/id', async () => {
-      const response = await request(app.getHttpServer()).patch('/users/1');
-      expect(response.status).toEqual(201);
-    });
-
-    it('PATCH - /users/id/restore', async () => {
-      const response = await request(app.getHttpServer()).patch(
-        '/v1/users/1/restore',
-      );
-      expect(response.status).toEqual(200);
+      expect(response.statusCode).toEqual(HttpStatus.CREATED);
+      expect(response.body).toEqual(userMock);
+      expect(response.body).toHaveProperty('id');
     });
   });
 
-  // describe('PATCH Users - e2e', () => {
-  //   it('PATCH - /users/');
-  // });
-  //});
+  describe('GET Users - e2e', () => {
+    it('GET - /users', async () => {
+      const response = await request(app.getHttpServer()).get('/users');
 
-  // describe('Users', () => {
-  //   let app: INestApplication;
-  //   const userService = { findAll: () => listAllUsersMock };
+      expect(response.status).toEqual(HttpStatus.OK);
+      expect(response.body).toEqual(listAllUsersMock);
+      expect(response.body).toBeInstanceOf(Array);
+    });
 
-  //   beforeAll(async () => {
-  //     const moduleRef = await Test.createTestingModule({
-  //       imports: [UsersModule],
-  //     })
-  //       .overrideProvider(userRepositoryMock.provide)
-  //       .useValue(userRepositoryMock.useValue)
-  //       .overrideGuard(AuthGuard)
-  //       .useValue(authGuardMock)
-  //       .compile();
+    it('GET - /users/me', async () => {
+      const response = await request(app.getHttpServer()).get('/users/me');
 
-  //     app = moduleRef.createNestApplication();
-  //     await app.init();
-  //   });
+      expect(response.statusCode).toEqual(HttpStatus.OK);
+      expect(response.body).toEqual(userMock);
+      expect(response.body).toBeInstanceOf(Object);
+    });
 
-  //   it(`/GET users`, () => {
-  //     return request(app.getHttpServer()).get('/users').expect(200).expect({
-  //       data: userService.findAll(),
-  //     });
-  //   });
+    it('GET - /users/id', async () => {
+      const response = await request(app.getHttpServer()).get('/users/1');
 
-  //   afterAll(async () => {
-  //     await app.close();
-  //   });
-  // })
+      expect(response.status).toBe(HttpStatus.OK);
+      expect(response.body).toEqual(userMock);
+      expect(response.body).toBeInstanceOf(Object);
+    });
+  });
+
+  describe('PATCH Users - e2e', () => {
+    it('PATCH - /users/me', async () => {
+      const response = await request(app.getHttpServer())
+        .patch('/users/me')
+        .send(updateUserMock);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      expect(response.body).toEqual(updatedUserMock);
+    });
+
+    it('PATCH - /users/id', async () => {
+      const response = await request(app.getHttpServer())
+        .patch('/users/1')
+        .send(updateUserMock);
+
+      expect(response.status).toEqual(HttpStatus.OK);
+      expect(response.body).toEqual(updatedUserMock);
+    });
+
+    it('PATCH - /users/id/restore', async () => {
+      const response = await request(app.getHttpServer())
+        .patch('/users/1/restore')
+        .send(updateUserMock);
+
+      expect(response.status).toEqual(HttpStatus.NO_CONTENT);
+      expect(response.body).toStrictEqual({});
+
+      const resourceRestored = await userRepositoryMock.useValue.findOne(1);
+      expect(resourceRestored).toBeTruthy();
+    });
+  });
+
+  describe('DELETE - Users - e2e', () => {
+    it('DELETE - /users/me', async () => {
+      const response = await request(app.getHttpServer()).delete('/users/me/');
+
+      expect(response.status).toEqual(HttpStatus.NO_CONTENT);
+      expect(response.header['content-type']).toBeFalsy();
+    });
+
+    it('DELETE - /users/id', async () => {
+      const response = await request(app.getHttpServer()).delete('/users/1');
+
+      expect(response.status).toEqual(HttpStatus.NO_CONTENT);
+      expect(response.body).toStrictEqual({});
+      expect(response.header['content-type']).toBeFalsy();
+    });
+  });
 });
