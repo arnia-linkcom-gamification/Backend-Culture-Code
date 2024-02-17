@@ -1,3 +1,4 @@
 export const requestMock = {
-  user: { userId: 1 },
+  id: 1,
+  role: 'admin',
 };

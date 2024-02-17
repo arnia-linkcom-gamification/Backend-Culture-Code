@@ -15,6 +15,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+  app.enableCors();
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Arnia/Linkcom - Gamification')
