@@ -1,73 +1,33 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+#Descrição
+O propósito da aplicação Gamification é oferecer um sistema às empresas pelo qual ela poderá oferecer bonificação aos seus funcionários pelo desempenho profissional. O administrador/RH atribui créditos aos funcionários de acordo com a sua performance e estes por sua vez poderão realizar resgates de produtos conforme o saldo de créditos que possui.
+#Tecnologias
+•	Nestjs: Utilizado como framework backend, trabalhando por debaixo dos panos com Nodejs e Express;
+•	Postgresql: Banco de dados relacional utilizado para armazenar informações do projeto;
+•	TypeORM: ORM utilizado para comunicação com banco de dados;
+•	Swagger: Utilizado para documentação de rotas e seus métodos atrelados juntamente com os respectivos payloads;
+•	Class-Validator: Usado para validações de payloads da aplicação;
+•	Jest: Biblioteca de teste para realizar os teste unitários e validação de serviços e rotas;
+•	Supertest: Biblioteca que fornece abstração de alto nível que falicita a realizações dos testes das requisições HTTP ;
+•	Multer: biblioteca Node.js middleware para lidar com dados do tipo multipart/form-data, simplificando o processo de upload de arquivos
+#Instalar projeto.
+Rodar comando:
+`npm install`
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+#Inicializar projeto.
+Rodar no modo de desenvolvimento:
+`npm run start:dev`
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Modo de produção, rode em sequência:
+`npm run build`
+`npm run start:prod`
 
-## Description
+#Documentação
+Para acessar a documentação do projeto [clique aqui] (https://backend-culture-code-production.up.railway.app/docs) 
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+#Diagrama de entidades e relacionamento
+Para visualizar o diagrama da aplicação [clique aqui] (https://github.com/arnia-linkcom-gamification/Backend-Culture-Code/assets/116851717/6b4bd259-786a-4705-858a-f065bbcf8fb1)	
+![culture-code-v2 drawio](https://github.com/arnia-linkcom-gamification/Backend-Culture-Code/assets/116851717/6b4bd259-786a-4705-858a-f065bbcf8fb1)
 
-## Installation
-
-```bash
-$ npm install
-```
-
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+#Testes
+Para rodar os testes:
+`npm test`
