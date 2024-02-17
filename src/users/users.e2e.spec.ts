@@ -47,6 +47,7 @@ describe('Users e2e', () => {
       expect(response.statusCode).toEqual(HttpStatus.CREATED);
       expect(response.body).toEqual(userMock);
       expect(response.body).toHaveProperty('id');
+      expect(response.header['authorization']).toBeFalsy();
     });
   });
 
