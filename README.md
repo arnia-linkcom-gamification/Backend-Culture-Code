@@ -34,7 +34,7 @@ Agora é necessário instalar as dependencias do projeto para que ele possa roda
 
 ###### Modo de produção
 `npm run build`<br>
-`npm run start:prod`
+`npm run start`
 
 # Documentação
 Para acessar a documentação do projeto [clique aqui](https://backend-culture-code-production.up.railway.app/docs) 
