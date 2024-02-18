@@ -1,6 +1,5 @@
 import {
   BeforeInsert,
-  BeforeUpdate,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -64,7 +63,6 @@ export class User {
   createdAt: Date;
 
   @BeforeInsert()
-  @BeforeUpdate()
   async passwordHash() {
     try {
       if (!this.password) {

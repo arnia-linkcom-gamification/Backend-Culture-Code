@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto, UploadImageDto } from './dto/create-user.dto';
@@ -117,6 +118,7 @@ export class UsersService {
 
       if (payload.password) {
         const user = await this.findOne(id);
+        payload.password = await bcrypt.hash(payload.password, 12);
         await this.usersRepository.save(Object.assign(user, payload));
         return await this.findOne(id);
       }
