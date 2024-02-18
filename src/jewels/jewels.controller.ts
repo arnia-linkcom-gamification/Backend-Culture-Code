@@ -11,7 +11,6 @@ import {
   ParseIntPipe,
   UploadedFile,
   UseInterceptors,
-  Delete,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -114,11 +113,5 @@ export class JewelsController {
     @Param('userId', ParseIntPipe) userId: number,
   ) {
     return await this.jewelsService.assign(jewelId, userId);
-  }
-
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    console.log(id);
-    return this.jewelsService.delete(+id);
   }
 }

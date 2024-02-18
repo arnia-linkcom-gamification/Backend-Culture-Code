@@ -129,27 +129,4 @@ export class JewelsService {
       throw new HttpException(error.message, error.status);
     }
   }
-
-  async delete(id: number) {
-    try {
-      if (!id) {
-        throw new BadRequestException('Id must be a integer');
-      }
-
-      const { affected } = await this.jewelRepository.delete(id);
-      console.log(affected);
-      if (affected === 0) {
-        throw new NotFoundException('User not found');
-      }
-
-      return {
-        message: 'User deleted with success!!',
-      };
-    } catch (error) {
-      throw new HttpException(
-        error?.message || 'Server error',
-        error?.status || 500,
-      );
-    }
-  }
 }
