@@ -19,8 +19,14 @@ O propósito da aplicação Gamification é oferecer um sistema às empresas pel
 •	<b>Multer:</b> biblioteca Node.js middleware para lidar com dados do tipo multipart/form-data, simplificando o processo de upload de arquivos.<br>
 
 # Instalar projeto
-Rodar comando:
-`npm install`
+Para iniciar é necessário clonar o repositório para sua máquina com o comando:<br>
+`git clone https://github.com/arnia-linkcom-gamification/Frontend-Culture-Code.git`<br>
+
+Após isso é necessário acessar a pasta criada atráves do comando:<br>
+`cd ./Frontend-Culture-Code`<br>
+
+Agora é necessário instalar as dependencias do projeto para que ele possa rodar em sua máquina com o comando:<br>
+`npm instal`
 
 # Inicializar projeto
 ###### Rodar no modo de desenvolvimento:
